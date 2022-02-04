@@ -10,7 +10,14 @@ namespace TaikoMapSVViewer
 {
     public class ConvertedTimingPoint
     {
+        double sliderMultiplier = -1;
         List<UninheritedTimingPoint> timingPoints = new List<UninheritedTimingPoint>();
+
+        public double SliderMultiplier
+        {
+            get { return sliderMultiplier; }
+            set { sliderMultiplier = value; }
+        }
 
         public void AddTimingPoint(TimingPoint toAdd)
         {
@@ -31,13 +38,13 @@ namespace TaikoMapSVViewer
             {
                 if (lowestSV == -1)
                 {
-                    lowestSV = utp.BPM;
+                    lowestSV = utp.BPM * (sliderMultiplier / 1.4);
                 }
                 foreach (InheritedTimingPoint itp in utp.InheritedTimingPoints)
                 {
                     if (itp.AdjustedBPM < lowestSV)
                     {
-                        lowestSV = itp.AdjustedBPM;
+                        lowestSV = itp.AdjustedBPM * (sliderMultiplier / 1.4);
                     }
                 }
             }
@@ -50,13 +57,13 @@ namespace TaikoMapSVViewer
             {
                 if (highestSV == -1)
                 {
-                    highestSV = utp.BPM;
+                    highestSV = utp.BPM * (sliderMultiplier / 1.4);
                 }
                 foreach (InheritedTimingPoint itp in utp.InheritedTimingPoints)
                 {
                     if (itp.AdjustedBPM > highestSV)
                     {
-                        highestSV = itp.AdjustedBPM;
+                        highestSV = itp.AdjustedBPM * (sliderMultiplier / 1.4);
                     }
                 }
             }
@@ -72,12 +79,12 @@ namespace TaikoMapSVViewer
             if (timingPoints.Count > 1)
             {
                 //Check more uninherited points.
-                return GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
+                return GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).AdjustedBPM * (sliderMultiplier / 1.4);
             }
             else
             {
                 //Only one uninherited point, search inside that one.
-                return timingPoints[0].GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
+                return timingPoints[0].GetClosestGreenTimingPoint(toCheck).AdjustedBPM * (sliderMultiplier / 1.4);
             }
         }
 

@@ -57,6 +57,7 @@ namespace TaikoMapSVViewer
         }
         void LoadConvertedTimingPoints(Beatmap toLoad)
         {
+            ctp.SliderMultiplier = toLoad.DifficultySection.SliderMultiplier;
             foreach (TimingPoint tp in toLoad.TimingPoints)
             {
                 ctp.AddTimingPoint(tp);
@@ -172,6 +173,8 @@ namespace TaikoMapSVViewer
             //    a.AxisX.LineColor = Color.Pink;
             //    a.AxisY.LineColor = Color.Pink;
             //}
+
+
         }
         void SetWindowTitle(BeatmapMetadataSection data)
         {
