@@ -118,7 +118,7 @@ namespace TaikoMapSVViewer
 
             foreach (int milli in millis)
             {
-                seconds.Add(Math.Round(milli / 1000.0, 4));
+                seconds.Add(Math.Round(milli / 1000.0, 5));
             }
 
             return seconds;
@@ -139,6 +139,7 @@ namespace TaikoMapSVViewer
                 //series.Points.DataBindXY(new[] { 2001, 2002, 2003, 2004 }, new[] { 100, 200, 90, 150 });
                 //series.Points.DataBindXY(MillisToSeconds(objectTimes), adjustedSVs);
                 series.Points.DataBindXY(MillisToSeconds(section.GetMillis()), section.GetSVs());
+                //series.Points.DataBindXY(section.GetMillis(), section.GetSVs());
                 series.ChartType = SeriesChartType.FastLine;
                 series.BorderWidth = 1;
                 series.BorderColor = Color.Gray;
@@ -153,16 +154,24 @@ namespace TaikoMapSVViewer
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
             SVChart.ChartAreas[0].AxisX.Interval = 30;
 
+            SVChart.ChartAreas[0].AxisX.LineColor = Color.Black;
+            SVChart.ChartAreas[0].AxisY.LineColor = Color.Black;
+
+            SVChart.ChartAreas[0].AxisX.MajorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
+            SVChart.ChartAreas[0].AxisX.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
+            SVChart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
+            SVChart.ChartAreas[0].AxisY.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
+
             SVChart.ChartAreas[0].AxisX.Name = "Seconds";
             SVChart.ChartAreas[0].AxisY.Name = "BPM SV";
 
-            foreach (ChartArea a in SVChart.ChartAreas)
-            {
-                //a.AxisX.LineColor = Color.FromArgb(126, 126, 126, 126);
-                //a.AxisY.LineColor = Color.FromArgb(126, 126, 126, 126);
-                a.AxisX.LineColor = Color.Pink;
-                a.AxisY.LineColor = Color.Pink;
-            }
+            //foreach (ChartArea a in SVChart.ChartAreas)
+            //{
+            //    //a.AxisX.LineColor = Color.FromArgb(126, 126, 126, 126);
+            //    //a.AxisY.LineColor = Color.FromArgb(126, 126, 126, 126);
+            //    a.AxisX.LineColor = Color.Pink;
+            //    a.AxisY.LineColor = Color.Pink;
+            //}
         }
         void SetWindowTitle(BeatmapMetadataSection data)
         {
