@@ -56,6 +56,8 @@
   <ItemGroup>
     <Compile Include="Data\Beatmap\ConvertedTimingPoint.cs" />
     <Compile Include="Data\Beatmap\Objects.cs" />
+    <Compile Include="Data\ChartData\ChartSection.cs" />
+    <Compile Include="Data\ChartData\ObjectSV.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -81,6 +81,22 @@ namespace TaikoMapSVViewer
             }
         }
 
+        public bool IsNoteInKiai(HitObject toCheck)
+        {
+            bool result = false;
+
+            if (timingPoints.Count > 1)
+            {
+                return GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).IsKiai;
+            }
+            else
+            {
+                return timingPoints[0].GetClosestGreenTimingPoint(toCheck).IsKiai;
+            }
+
+            return result;
+        }
+
         UninheritedTimingPoint GetClosestRedTimingPoint(HitObject toCheck)
         {
             UninheritedTimingPoint aux = null;
@@ -195,6 +211,10 @@ namespace TaikoMapSVViewer
         public TimingPoint TimingPoint
         {
             get { return _originalPoint; }
+        }
+        public bool IsKiai
+        {
+            get { return _originalPoint.Effects.HasFlag(OsuParsers.Enums.Beatmaps.Effects.Kiai); }
         }
 
         public InheritedTimingPoint(UninheritedTimingPoint parent, TimingPoint originalPoint)

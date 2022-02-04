@@ -15,6 +15,7 @@ using OsuParsers.Beatmaps.Sections;
 using OsuParsers.Beatmaps.Objects.Taiko;
 using OsuParsers.Enums.Beatmaps;
 using System.Windows.Forms.DataVisualization.Charting;
+using TaikoMapSVViewer.Data.ChartData;
 
 namespace TaikoMapSVViewer
 {
@@ -22,8 +23,12 @@ namespace TaikoMapSVViewer
     {
         Beatmap currentBeatmap;
         ConvertedTimingPoint ctp = new ConvertedTimingPoint();
-        List<double> adjustedSVs = new List<double>();
-        List<int> objectTimes = new List<int>();
+        //List<double> adjustedSVs = new List<double>();
+        //List<int> objectTimes = new List<int>();
+
+        List<ChartSection> chartSections = new List<ChartSection>();
+
+        string currentLoadedBeatmap = "";
         bool hasBeatmap
         {
             get { return currentBeatmap != null; }
@@ -56,49 +61,108 @@ namespace TaikoMapSVViewer
             {
                 ctp.AddTimingPoint(tp);
             }
+            Console.WriteLine("Lmao");
         }
         void LoadHitObjects(Beatmap toLoad)
         {
-            adjustedSVs.Clear();
-            objectTimes.Clear();
+            chartSections.Clear();
+            bool previousNoteWasKiai = false;
+
             for (int i = 0; i < toLoad.HitObjects.Count; i++)
             {
                 HitObject ho = toLoad.HitObjects[i];
-                adjustedSVs.Add(ctp.GetNoteAdjustedBPM(ho));
-                objectTimes.Add(ho.StartTime);
-                if (ho.GetType() == typeof(TaikoHit))
+                bool isKiai = ctp.IsNoteInKiai(ho);
+
+                ///If there are no chartSections, create one.
+                ///     You gotta check if the first timing point starts with a kiai
+                ///     so gotta wait on that one till the first object is gotten
+                ///
+
+                if (chartSections.Count == 0)
                 {
-                    TaikoHit aux = ho as TaikoHit;
-                    string type = aux.Color == TaikoColor.Red ? "Red    " : "Blue   ";
-                    Console.WriteLine($" {i+1}:{type} - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
+                    chartSections.Add(new ChartSection(isKiai));
                 }
-                else if (ho.GetType() == typeof(TaikoDrumroll))
+                else if (isKiai != previousNoteWasKiai)
                 {
-                    Console.WriteLine($" {i+1}:Slider  - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
+                    //chartSections[chartSections.Count - 1].AddObject(Math.Round(ctp.GetNoteAdjustedBPM(ho), 2), ho.StartTime);
+                    chartSections[chartSections.Count - 1].AddObject(ctp.GetNoteAdjustedBPM(ho), ho.StartTime);
+                    chartSections.Add(new ChartSection(isKiai));
                 }
-                else
-                {
-                    Console.WriteLine($" {i+1}:Spinner - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
-                }
+
+                //adjustedSVs.Add(Math.Round(ctp.GetNoteAdjustedBPM(ho), 2));
+                //objectTimes.Add(ho.StartTime);
+
+                //chartSections[chartSections.Count - 1].AddObject(Math.Round(ctp.GetNoteAdjustedBPM(ho), 2), ho.StartTime);
+                chartSections[chartSections.Count - 1].AddObject(ctp.GetNoteAdjustedBPM(ho), ho.StartTime);
+
+                //if (ho.GetType() == typeof(TaikoHit))
+                //{
+                //    TaikoHit aux = ho as TaikoHit;
+                //    string type = aux.Color == TaikoColor.Red ? "Red    " : "Blue   ";
+                //    Console.WriteLine($" {i + 1}:{type} - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
+                //}
+                //else if (ho.GetType() == typeof(TaikoDrumroll))
+                //{
+                //    Console.WriteLine($" {i + 1}:Slider  - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
+                //}
+                //else
+                //{
+                //    Console.WriteLine($" {i + 1}:Spinner - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
+                //}
+                previousNoteWasKiai = isKiai;
             }
         }
+        List<double> MillisToSeconds(List<int> millis)
+        {
+            List<double> seconds = new List<double>();
+
+            foreach (int milli in millis)
+            {
+                seconds.Add(Math.Round(milli / 1000.0, 4));
+            }
+
+            return seconds;
+        }
+
         void DrawChart()
         {
             SVChart.Series.Clear();
-            double minVal = ctp.GetLowestBPMSV();
-            double maxVal = ctp.GetHighestBPMSV();
-            var series = new Series("SVs");
+            double minVal = Math.Round(ctp.GetLowestBPMSV());
+            double maxVal = Math.Round(ctp.GetHighestBPMSV());
 
-            //series.Points.DataBindXY(new[] { 2001, 2002, 2003, 2004 }, new[] { 100, 200, 90, 150 });
-            series.Points.DataBindXY(objectTimes, adjustedSVs);
-            series.ChartType = SeriesChartType.FastLine;
-            series.BorderWidth = 1;
-            series.BorderColor = Color.Black;
-            series.Color = Color.Red;
-            SVChart.Series.Add(series);
-            SVChart.ChartAreas[0].AxisY.Minimum = minVal -10;
-            SVChart.ChartAreas[0].AxisY.Maximum = maxVal +10;
+            for (int i = 0; i < chartSections.Count; i++)
+            {
+                ChartSection section = chartSections[i];
+
+                var series = new Series($"SVs-{i}");
+
+                //series.Points.DataBindXY(new[] { 2001, 2002, 2003, 2004 }, new[] { 100, 200, 90, 150 });
+                //series.Points.DataBindXY(MillisToSeconds(objectTimes), adjustedSVs);
+                series.Points.DataBindXY(MillisToSeconds(section.GetMillis()), section.GetSVs());
+                series.ChartType = SeriesChartType.FastLine;
+                series.BorderWidth = 1;
+                series.BorderColor = Color.Gray;
+                //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
+                series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
+                SVChart.Series.Add(series);
+            }
+
+            //SVChart.ChartAreas[0].BackColor = Color.Black;
+            SVChart.ChartAreas[0].AxisY.Minimum = minVal - 10;
+            SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
+            SVChart.ChartAreas[0].AxisX.Interval = 30;
+
+            SVChart.ChartAreas[0].AxisX.Name = "Seconds";
+            SVChart.ChartAreas[0].AxisY.Name = "BPM SV";
+
+            foreach (ChartArea a in SVChart.ChartAreas)
+            {
+                //a.AxisX.LineColor = Color.FromArgb(126, 126, 126, 126);
+                //a.AxisY.LineColor = Color.FromArgb(126, 126, 126, 126);
+                a.AxisX.LineColor = Color.Pink;
+                a.AxisY.LineColor = Color.Pink;
+            }
         }
         void SetWindowTitle(BeatmapMetadataSection data)
         {
@@ -123,10 +187,19 @@ namespace TaikoMapSVViewer
                 openFileDialog.FilterIndex = 0;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    ParseBeatmap(openFileDialog.FileName);
+                    currentLoadedBeatmap = openFileDialog.FileName;
+                    ParseBeatmap(currentLoadedBeatmap);
                 }
             }
         }
         #endregion
+
+        private void toolStripRefresh_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(currentLoadedBeatmap))
+            {
+                ParseBeatmap(currentLoadedBeatmap);
+            }
+        }
     }
 }
