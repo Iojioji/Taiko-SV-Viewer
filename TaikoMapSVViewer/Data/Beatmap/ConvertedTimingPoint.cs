@@ -21,7 +21,7 @@ namespace TaikoMapSVViewer
 
         public void AddTimingPoint(TimingPoint toAdd)
         {
-            if (toAdd.Inherited)
+            if (!toAdd.Inherited)
             {
                 timingPoints.Add(new UninheritedTimingPoint(toAdd));
             }
@@ -38,17 +38,17 @@ namespace TaikoMapSVViewer
             {
                 if (lowestSV == -1)
                 {
-                    lowestSV = utp.BPM * (sliderMultiplier / 1.4);
+                    lowestSV = utp.BPM;
                 }
                 foreach (InheritedTimingPoint itp in utp.InheritedTimingPoints)
                 {
                     if (itp.AdjustedBPM < lowestSV)
                     {
-                        lowestSV = itp.AdjustedBPM * (sliderMultiplier / 1.4);
+                        lowestSV = itp.AdjustedBPM;
                     }
                 }
             }
-            return lowestSV;
+            return lowestSV * (sliderMultiplier / 1.4);
         }
         public double GetHighestBPMSV()
         {
@@ -57,17 +57,17 @@ namespace TaikoMapSVViewer
             {
                 if (highestSV == -1)
                 {
-                    highestSV = utp.BPM * (sliderMultiplier / 1.4);
+                    highestSV = utp.BPM;
                 }
                 foreach (InheritedTimingPoint itp in utp.InheritedTimingPoints)
                 {
                     if (itp.AdjustedBPM > highestSV)
                     {
-                        highestSV = itp.AdjustedBPM * (sliderMultiplier / 1.4);
+                        highestSV = itp.AdjustedBPM;
                     }
                 }
             }
-            return highestSV;
+            return highestSV * (sliderMultiplier / 1.4);
         }
         public int GetLastOffset()
         {
@@ -76,16 +76,21 @@ namespace TaikoMapSVViewer
 
         public double GetNoteAdjustedBPM(HitObject toCheck)
         {
+            double result = 0;
+            double adjustedBPM = 0;
             if (timingPoints.Count > 1)
             {
                 //Check more uninherited points.
-                return GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).AdjustedBPM * (sliderMultiplier / 1.4);
+                adjustedBPM = GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
             }
             else
             {
                 //Only one uninherited point, search inside that one.
-                return timingPoints[0].GetClosestGreenTimingPoint(toCheck).AdjustedBPM * (sliderMultiplier / 1.4);
+                adjustedBPM = timingPoints[0].GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
             }
+
+            result = adjustedBPM * (sliderMultiplier / 1.4);
+            return result;
         }
 
         public bool IsNoteInKiai(HitObject toCheck)
