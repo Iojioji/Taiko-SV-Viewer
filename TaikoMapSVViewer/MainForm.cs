@@ -129,15 +129,19 @@ namespace TaikoMapSVViewer
                 var series = new Series($"SVs-{i}");
 
                 series.Points.DataBindXY(MillisToSeconds(section.GetMillis()), section.GetSVs());
-                series.ChartType = SeriesChartType.FastLine;
+                series.ChartType = SeriesChartType.Line;
                 series.BorderWidth = 1;
                 series.BorderColor = Color.Gray;
+
+                series.MarkerStyle = MarkerStyle.Circle;
+                series.MarkerSize = 4;
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
                 series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 SVChart.Series.Add(series);
             }
 
             SVChart.ChartAreas[0].AxisX.Minimum = 0;
+            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
             SVChart.ChartAreas[0].AxisY.Minimum = minVal - 10;
             SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
@@ -154,6 +158,17 @@ namespace TaikoMapSVViewer
 
             SVChart.ChartAreas[0].AxisX.Name = "Seconds";
             SVChart.ChartAreas[0].AxisY.Name = "BPM SV";
+
+            SVChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            SVChart.ChartAreas[0].CursorX.AutoScroll = true;
+            SVChart.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+
+            SVChart.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            SVChart.ChartAreas[0].CursorY.AutoScroll = true;
+            SVChart.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+
+            SVChart.Series[0].ToolTip = $"{"#VAL":F2} BPM, {"#VALX":F2} seconds, ";
+
         }
         void SetWindowTitle(BeatmapMetadataSection data)
         {

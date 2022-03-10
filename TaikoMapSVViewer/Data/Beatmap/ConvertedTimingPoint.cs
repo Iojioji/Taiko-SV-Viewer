@@ -122,6 +122,10 @@ namespace TaikoMapSVViewer
                     break;
                 }
             }
+            if (aux == null)
+            {
+                return timingPoints[0];
+            }
             return aux;
         }
         public string PrintTimingPoints()
