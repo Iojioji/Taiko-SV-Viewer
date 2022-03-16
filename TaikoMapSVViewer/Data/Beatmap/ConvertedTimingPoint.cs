@@ -171,7 +171,8 @@ namespace TaikoMapSVViewer
         {
             if (_inheritedTimingPoints.Count > 0)
                 return _inheritedTimingPoints[_inheritedTimingPoints.Count - 1].TimingPoint.Offset;
-            return -2;
+            else
+                return _point.Offset;
         }
         public InheritedTimingPoint GetClosestGreenTimingPoint(HitObject toCheck)
         {

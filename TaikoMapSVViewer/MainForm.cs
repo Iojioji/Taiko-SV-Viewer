@@ -16,6 +16,10 @@ using OsuParsers.Beatmaps.Objects.Taiko;
 using OsuParsers.Enums.Beatmaps;
 using System.Windows.Forms.DataVisualization.Charting;
 using TaikoMapSVViewer.Data.ChartData;
+using System.Reflection;
+using System.Diagnostics;
+using TaikoMapSVViewer.Settings;
+using AutoUpdaterDotNET;
 
 namespace TaikoMapSVViewer
 {
@@ -27,6 +31,8 @@ namespace TaikoMapSVViewer
         List<ChartSection> chartSections = new List<ChartSection>();
 
         string currentLoadedBeatmap = "";
+        //int numberOfZoom = 0;
+        int maxMarkerSize = 30;
         bool hasBeatmap
         {
             get { return currentBeatmap != null; }
@@ -39,6 +45,20 @@ namespace TaikoMapSVViewer
             //Location = new Point((int)(Screen.AllScreens[1].WorkingArea.Location.X * 1.25), (int)(Screen.AllScreens[1].WorkingArea.Location.Y * 1.25));
             //Location.Offset(-this.Width * 3, -this.Height * 3);
             InitializeComponent();
+            //SVChart.MouseWheel += SVChart_MouseWheel;
+        }
+
+        public void Initialize()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string assemblyVersion = fvi.FileVersion;
+
+            SettingsManager.Version = assemblyVersion;
+        }
+        public void Reset()
+        {
+
         }
 
         void ParseBeatmap(string beatmapPath)
@@ -134,14 +154,17 @@ namespace TaikoMapSVViewer
                 series.BorderColor = Color.Gray;
 
                 series.MarkerStyle = MarkerStyle.Circle;
-                series.MarkerSize = 4;
+                series.MarkerSize = 1;
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
                 series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 SVChart.Series.Add(series);
             }
 
             SVChart.ChartAreas[0].AxisX.Minimum = 0;
-            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
+            //SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
+            List<int> lastPointMillis = chartSections[chartSections.Count - 1].GetMillis();
+            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(lastPointMillis[lastPointMillis.Count - 1] * 1.02 / 1000.0);
+
             SVChart.ChartAreas[0].AxisY.Minimum = minVal - 10;
             SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
@@ -170,6 +193,21 @@ namespace TaikoMapSVViewer
             SVChart.Series[0].ToolTip = $"{"#VAL":F2} BPM, {"#VALX":F2} seconds, ";
 
         }
+        void SetChartMarkerSize(int size)
+        {
+            if (SVChart.Series.Count == 0)
+            {
+                Console.WriteLine($"Can't change series' size, you HAVE no series lmao");
+                return;
+            }
+            for (int i = 0; i < SVChart.Series.Count; i++)
+            {
+                Console.WriteLine($"ChangedMarkerSize! '{SVChart.Series[i].MarkerSize}' => '{size}'");
+                SVChart.Series[i].MarkerSize = size;
+            }
+        }
+
+
         void SetWindowTitle(BeatmapMetadataSection data)
         {
             Text = $"Checking: {data.Title} [{data.Version}] by {data.Creator}";
@@ -185,6 +223,14 @@ namespace TaikoMapSVViewer
         }
 
         #region events
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (UpdateManager.HasUpdate())
+            {
+                updateStripButt.BackColor = Color.LightGreen;
+            }
+        }
+
         private void LoadBeatmap_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -206,6 +252,139 @@ namespace TaikoMapSVViewer
                 ParseBeatmap(currentLoadedBeatmap);
             }
         }
+        //private void SVChart_MouseWheel(object sender, MouseEventArgs e)
+        //{
+        //    var chart = (Chart)sender;
+        //    var xAxis = chart.ChartAreas[0].AxisX;
+        //    var yAxis = chart.ChartAreas[0].AxisY;
+
+        //    var xMin = xAxis.ScaleView.ViewMinimum;
+        //    var xMax = xAxis.ScaleView.ViewMaximum;
+        //    var yMin = yAxis.ScaleView.ViewMinimum;
+        //    var yMax = yAxis.ScaleView.ViewMaximum;
+
+        //    int intervalX = 1;
+        //    int intervalY = 1;
+
+        //    try
+        //    {
+        //        if (e.Delta < 0 && numberOfZoom > 0) // Scrolled down.
+        //        {
+        //            var posXStart = xAxis.PixelPositionToValue(e.Location.X) -  intervalX * 2 / Math.Pow(2, numberOfZoom);
+        //            var posXFinish = xAxis.PixelPositionToValue(e.Location.X) + intervalX * 2 / Math.Pow(2, numberOfZoom);
+        //            var posYStart = yAxis.PixelPositionToValue(e.Location.Y) -  intervalY * 2 / Math.Pow(2, numberOfZoom);
+        //            var posYFinish = yAxis.PixelPositionToValue(e.Location.Y) + intervalY * 2 / Math.Pow(2, numberOfZoom);
+
+        //            if (posXStart < 0) posXStart = 0;
+        //            if (posYStart < 0) posYStart = 0;
+        //            if (posYFinish > yAxis.Maximum) posYFinish = yAxis.Maximum;
+        //            if (posXFinish > xAxis.Maximum) posYFinish = xAxis.Maximum;
+        //            xAxis.ScaleView.Zoom(posXStart, posXFinish);
+        //            yAxis.ScaleView.Zoom(posYStart, posYFinish);
+        //            numberOfZoom--;
+        //        }
+        //        else if (e.Delta < 0 && numberOfZoom == 0) //Last scrolled dowm
+        //        {
+        //            yAxis.ScaleView.ZoomReset();
+        //            xAxis.ScaleView.ZoomReset();
+        //        }
+        //        else if (e.Delta > 0) // Scrolled up.
+        //        {
+
+        //            var posXStart = xAxis.PixelPositionToValue(e.Location.X) -  intervalX / Math.Pow(2, numberOfZoom);
+        //            var posXFinish = xAxis.PixelPositionToValue(e.Location.X) + intervalX / Math.Pow(2, numberOfZoom);
+        //            var posYStart = yAxis.PixelPositionToValue(e.Location.Y) -  intervalY / Math.Pow(2, numberOfZoom);
+        //            var posYFinish = yAxis.PixelPositionToValue(e.Location.Y) + intervalY / Math.Pow(2, numberOfZoom);
+
+        //            xAxis.ScaleView.Zoom(posXStart, posXFinish);
+        //            yAxis.ScaleView.Zoom(posYStart, posYFinish);
+        //            numberOfZoom++;
+        //        }
+
+        //        if (numberOfZoom < 0) numberOfZoom = 0;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message, "Error");
+        //    }
+        //}
+
+        private void SVChartAxisChanged(object sender, ViewEventArgs e)
+        {
+            if (SVChart.ChartAreas.Count == 0)
+            {
+                Console.WriteLine($"No charts in area thing!");
+                return;
+            }
+
+            bool isXZoomed = SVChart.ChartAreas[0].AxisX.ScaleView.IsZoomed;
+            bool isYZoomed = SVChart.ChartAreas[0].AxisY.ScaleView.IsZoomed;
+
+            //if (SVChart.ChartAreas[0].CursorX.SelectionStart == double.NaN)
+            //{
+            //    Console.WriteLine($"CursorX SelectionStart was NaN!");
+            //}
+
+            double newXSelStart = isXZoomed ? SVChart.ChartAreas[0].CursorX.SelectionStart : -1;
+            double newXSelEnd = isXZoomed ? SVChart.ChartAreas[0].CursorX.SelectionEnd : -1;
+
+            double newYSelStart = isYZoomed ? SVChart.ChartAreas[0].CursorY.SelectionStart : -1;
+            double newYSelEnd = isYZoomed ? SVChart.ChartAreas[0].CursorY.SelectionEnd : -1;
+
+            double xAxisSize = isXZoomed ? SVChart.ChartAreas[0].AxisX.ScaleView.Size : 0;
+            double yAxisSize = isYZoomed ? SVChart.ChartAreas[0].AxisY.ScaleView.Size : 0;
+
+            Console.WriteLine($"New Selection!: ({isXZoomed}, {isYZoomed}) ({newXSelStart}, {newXSelEnd}), ({newYSelStart}, {newYSelEnd}) ---- ({xAxisSize}, {yAxisSize})");
+
+
+            if (isXZoomed && !isYZoomed)
+            {
+                SetChartMarkerSize((int)(maxMarkerSize / xAxisSize));
+            }
+            else if (!isXZoomed && isYZoomed)
+            {
+                SetChartMarkerSize((int)(maxMarkerSize / yAxisSize));
+            }
+            else if (!isXZoomed && !isYZoomed)
+            {
+                //No zoom;
+                SetChartMarkerSize(0);
+            }
+            else
+            {
+                int minSize = yAxisSize < xAxisSize ? (int)yAxisSize : (int)xAxisSize;
+                SetChartMarkerSize((int)(maxMarkerSize / minSize));
+            }
+        }
+
+        private void SVChartSelectionRangeChanged(object sender, CursorEventArgs e)
+        {
+            //Console.WriteLine($"Changed selection range!");
+        }
+
+        private void CheckUpdate_Click(object sender, EventArgs e)
+        {
+            if (UpdateManager.HasUpdate())
+            {
+                DialogResult dialogResult = MessageBox.Show("Do you want to update this magnificent piece of software and introduce some more bugs into it?", "Update Available", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.OK)
+                {
+                    try
+                    {
+                        AutoUpdater.Start($"https://raw.githubusercontent.com/Iojioji/Taiko-SV-Viewer/main/AutoUpdater.xml");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Something went wrong, tell Iojioji to get his stuff together!\r\n\r\nMessage: {ex.Message}\r\n\r\nStackTrace: {ex.StackTrace}", "Error while updating!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show($"No updates pending; you're already up to date fam");
+            }
+        }
         #endregion
+
     }
 }
