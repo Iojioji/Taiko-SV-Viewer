@@ -29,14 +29,14 @@ namespace TaikoMapSVViewer
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRefresh = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateStripButt = new System.Windows.Forms.ToolStripMenuItem();
             this.SVChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).BeginInit();
             this.SuspendLayout();
@@ -76,6 +76,12 @@ namespace TaikoMapSVViewer
             this.toolStripRefresh.Text = "Refresh";
             this.toolStripRefresh.Click += new System.EventHandler(this.toolStripRefresh_Click);
             // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
             // updateStripButt
             // 
             this.updateStripButt.Name = "updateStripButt";
@@ -88,8 +94,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea1);
             this.SVChart.Location = new System.Drawing.Point(12, 57);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 437);
@@ -98,14 +104,9 @@ namespace TaikoMapSVViewer
             this.SVChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.SVChartSelectionRangeChanged);
             this.SVChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.SVChartAxisChanged);
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            // 
             // MainForm
             // 
+            this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(875, 506);
             this.Controls.Add(this.SVChart);
@@ -116,6 +117,8 @@ namespace TaikoMapSVViewer
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Taiko SV Viewer";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.LoadMap_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.LoadMap_DrageEnter);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).EndInit();

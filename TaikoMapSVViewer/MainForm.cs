@@ -45,6 +45,7 @@ namespace TaikoMapSVViewer
             //Location = new Point((int)(Screen.AllScreens[1].WorkingArea.Location.X * 1.25), (int)(Screen.AllScreens[1].WorkingArea.Location.Y * 1.25));
             //Location.Offset(-this.Width * 3, -this.Height * 3);
             InitializeComponent();
+            Initialize();
             //SVChart.MouseWheel += SVChart_MouseWheel;
         }
 
@@ -55,6 +56,8 @@ namespace TaikoMapSVViewer
             string assemblyVersion = fvi.FileVersion;
 
             SettingsManager.Version = assemblyVersion;
+
+            this.AllowDrop = true;
         }
         public void Reset()
         {
@@ -221,7 +224,6 @@ namespace TaikoMapSVViewer
             }
             return aux;
         }
-
         #region events
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -384,7 +386,28 @@ namespace TaikoMapSVViewer
                 MessageBox.Show($"No updates pending; you're already up to date fam");
             }
         }
-        #endregion
 
+        private void LoadMap_DrageEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+        private void LoadMap_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length > 0)
+            {
+                if (files[0].Substring(Math.Max(0, files[0].Length - 4)) == ".osu")
+                {
+                    currentLoadedBeatmap = files[0];
+                    ParseBeatmap(currentLoadedBeatmap);
+                }
+                else
+                {
+                    MessageBox.Show($"That doesn't look like an osu beatmap file; I can only read .osu files unu", $"That's not a beatmap lol");
+                }
+            }
+        }
+        #endregion
     }
 }
