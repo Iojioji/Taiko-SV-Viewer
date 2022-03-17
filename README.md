@@ -19,7 +19,7 @@ You can check out other mode's maps. I haven't really tested those but it should
 
 ## What it already does
 - Open Beatmap Diffs
-  - Either through File > Open or by dragging an .osu file into it
+  - Either through File > Load or by dragging a .osu file into it
 - Refresh an already open map to check out those new cool SV changes you've made
 - Rough zoom in by selecting the are you want to zoom into
 - Exact SV + time of an object if you hover your mouse over a point on the line
