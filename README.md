@@ -25,3 +25,7 @@ You can check out other mode's maps. I haven't really tested those but it should
 - Exact SV + time of an object if you hover your mouse over a point on the line
 - Tells you when there's a pending update and handles updates (mostly) on its own
 - Can actually read beatmaps of other modes, not only osu!taiko (though I haven't tested it a lot so I dunno if it'll break if you open those haha)
+
+- - - -
+
+![](https://i.imgur.com/xZM3HVD.png "The program doing its thing")
