@@ -29,3 +29,7 @@ You can check out other mode's maps. I haven't really tested those but it should
 - - - -
 
 ![](https://i.imgur.com/xZM3HVD.png "The program doing its thing")
+
+The X axis indicates the time (in seconds)
+
+The Y axis indicates the SV; a 100 bpm map with x1 SV will have 100 SV, the same 100 bpm map with x1.5 SV will have 150 SV
