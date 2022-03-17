@@ -29,7 +29,7 @@ namespace TaikoMapSVViewer
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +78,7 @@ namespace TaikoMapSVViewer
             // 
             // settingsToolStripMenuItem
             // 
+            this.settingsToolStripMenuItem.Enabled = false;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -85,8 +86,8 @@ namespace TaikoMapSVViewer
             // updateStripButt
             // 
             this.updateStripButt.Name = "updateStripButt";
-            this.updateStripButt.Size = new System.Drawing.Size(57, 20);
-            this.updateStripButt.Text = "Update";
+            this.updateStripButt.Size = new System.Drawing.Size(115, 20);
+            this.updateStripButt.Text = "Check for updates";
             this.updateStripButt.Click += new System.EventHandler(this.CheckUpdate_Click);
             // 
             // SVChart
@@ -94,8 +95,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea2);
             this.SVChart.Location = new System.Drawing.Point(12, 57);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 437);

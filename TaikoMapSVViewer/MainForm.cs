@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 using OsuParsers.Beatmaps;
 using OsuParsers.Decoders;
 using OsuParsers.Beatmaps.Objects;
 using OsuParsers.Beatmaps.Sections;
-using OsuParsers.Beatmaps.Objects.Taiko;
-using OsuParsers.Enums.Beatmaps;
 using System.Windows.Forms.DataVisualization.Charting;
 using TaikoMapSVViewer.Data.ChartData;
 using System.Reflection;
@@ -397,6 +389,7 @@ namespace TaikoMapSVViewer
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             if (files.Length > 0)
             {
+                //TODO: Load all files dragged in
                 if (files[0].Substring(Math.Max(0, files[0].Length - 4)) == ".osu")
                 {
                     currentLoadedBeatmap = files[0];
