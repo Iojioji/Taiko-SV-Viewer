@@ -150,8 +150,9 @@ namespace TaikoMapSVViewer
                 series.BorderWidth = 1;
                 series.BorderColor = Color.Gray;
 
+                //TODO: Load markerstyle and line color from settings
                 series.MarkerStyle = MarkerStyle.Circle;
-                series.MarkerSize = 1;
+                series.MarkerSize = 0;
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
                 series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 SVChart.Series.Add(series);

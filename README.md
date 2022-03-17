@@ -9,6 +9,7 @@ You can check out other mode's maps. I haven't really tested those but it should
     - Change graph colors
     - Change marker style (color, size, show/hide)
 - Open multiple diffs
-- Add drag-and-drop to open diffs
-- Change marker size depending on zoom level
-- Add auto-update thing
+- Make barline gimmicks not show (unless they're affecting a hitobject)
+- ~Change marker size depending on zoom level~
+- ~Add drag-and-drop to open diffs~
+- ~Add auto-update thing~
