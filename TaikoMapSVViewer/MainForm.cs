@@ -43,11 +43,13 @@ namespace TaikoMapSVViewer
 
         public void Initialize()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            string assemblyVersion = fvi.FileVersion;
+            //Assembly assembly = Assembly.GetExecutingAssembly();
+            //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            //string assemblyVersion = fvi.FileVersion;
 
-            SettingsManager.Version = assemblyVersion;
+            var ver = Assembly.GetExecutingAssembly().GetName().Version;
+
+            SettingsManager.Version = ver.ToString();
 
             this.AllowDrop = true;
         }
@@ -361,10 +363,11 @@ namespace TaikoMapSVViewer
             if (UpdateManager.HasUpdate())
             {
                 DialogResult dialogResult = MessageBox.Show("Do you want to update this magnificent piece of software and introduce some more bugs into it?", "Update Available", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.OK)
+                if (dialogResult == DialogResult.Yes)
                 {
                     try
                     {
+                        Console.WriteLine($"Starting autoupdater");
                         AutoUpdater.Start($"https://raw.githubusercontent.com/Iojioji/Taiko-SV-Viewer/main/AutoUpdater.xml");
                     }
                     catch (Exception ex)
@@ -375,7 +378,7 @@ namespace TaikoMapSVViewer
             }
             else
             {
-                MessageBox.Show($"No updates pending; you're already up to date fam");
+                MessageBox.Show($"No updates pending; you're already up to date fam (v{SettingsManager.Version})");
             }
         }
 
