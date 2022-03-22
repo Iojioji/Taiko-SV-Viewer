@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Diagnostics;
 using TaikoMapSVViewer.Settings;
 using AutoUpdaterDotNET;
+using System.IO;
 
 namespace TaikoMapSVViewer
 {
@@ -25,7 +26,7 @@ namespace TaikoMapSVViewer
         string currentLoadedBeatmap = "";
         //int numberOfZoom = 0;
         int maxMarkerSize = 30;
-        bool hasBeatmap
+        bool HasBeatmap
         {
             get { return currentBeatmap != null; }
         }
@@ -60,13 +61,21 @@ namespace TaikoMapSVViewer
 
         void ParseBeatmap(string beatmapPath)
         {
-            Console.WriteLine($"Gonna check this map lmao: '{beatmapPath}'");
-            currentBeatmap = BeatmapDecoder.Decode(beatmapPath);
-            ctp = new ConvertedTimingPoint();
-            LoadConvertedTimingPoints(currentBeatmap);
-            LoadHitObjects(currentBeatmap);
-            DrawChart();
-            SetWindowTitle(currentBeatmap.MetadataSection);
+            try
+            {
+                Console.WriteLine($"Gonna check this map lmao: '{beatmapPath}'");
+                currentBeatmap = BeatmapDecoder.Decode(beatmapPath);
+                ctp = new ConvertedTimingPoint();
+                LoadConvertedTimingPoints(currentBeatmap);
+                LoadHitObjects(currentBeatmap);
+                DrawChart();
+                SetWindowTitle(currentBeatmap.MetadataSection);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it)\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            UpdateRefreshButton();
         }
         void LoadConvertedTimingPoints(Beatmap toLoad)
         {
@@ -75,7 +84,6 @@ namespace TaikoMapSVViewer
             {
                 ctp.AddTimingPoint(tp);
             }
-            Console.WriteLine("Lmao");
         }
         void LoadHitObjects(Beatmap toLoad)
         {
@@ -219,6 +227,48 @@ namespace TaikoMapSVViewer
             }
             return aux;
         }
+        void UpdateRefreshButton()
+        {
+
+            if (string.IsNullOrEmpty(currentLoadedBeatmap) || !File.Exists(currentLoadedBeatmap))
+            {
+                toolStripRefresh.Enabled = false;
+                return;
+            }
+
+            toolStripRefresh.Enabled = true;
+        }
+        void RefreshBeatmap()
+        {
+            if (string.IsNullOrEmpty(currentLoadedBeatmap))
+            {
+                //You've got no map already loaded lmao.
+                return;
+            }
+
+            if (!File.Exists(currentLoadedBeatmap))
+            {
+                //Uuuh, file no longer exists.
+                MessageBox.Show("Couldn't find that beatmap, did you deleted/moved/renamed it?\r\nTry opening it again instead of refreshing", "Uh oh...");
+                return;
+            }
+
+            Console.WriteLine($"Refreshing beatmap let's gooo");
+            ParseBeatmap(currentLoadedBeatmap);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F5)
+            {
+                if (toolStripRefresh.Enabled)
+                {
+                    RefreshBeatmap();
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         #region events
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -244,10 +294,7 @@ namespace TaikoMapSVViewer
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(currentLoadedBeatmap))
-            {
-                ParseBeatmap(currentLoadedBeatmap);
-            }
+            RefreshBeatmap();
         }
         //private void SVChart_MouseWheel(object sender, MouseEventArgs e)
         //{

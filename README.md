@@ -20,7 +20,7 @@ You can check out other mode's maps. I haven't really tested those but it should
 ## What it already does
 - Open Beatmap Diffs
   - Either through File > Load or by dragging a .osu file into it
-- Refresh an already open map to check out those new cool SV changes you've made
+- Refresh an already open map to check out those new cool SV changes you've made (you can also press F5)
 - Rough zoom in by selecting the are you want to zoom into (you can un-zoom by clicking the "(-)" symbol on the upper-left corner for Y axis or the lower-left corner for the X axis)
 - Exact SV + time of an object if you hover your mouse over a point on the line
 - Tells you when there's a pending update and handles updates (mostly; it'll ask if you wanna update first, in case there is an update available) on its own

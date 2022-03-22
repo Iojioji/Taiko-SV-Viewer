@@ -29,7 +29,7 @@ namespace TaikoMapSVViewer
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +71,7 @@ namespace TaikoMapSVViewer
             // 
             // toolStripRefresh
             // 
+            this.toolStripRefresh.Enabled = false;
             this.toolStripRefresh.Name = "toolStripRefresh";
             this.toolStripRefresh.Size = new System.Drawing.Size(58, 20);
             this.toolStripRefresh.Text = "Refresh";
@@ -95,8 +96,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea1);
             this.SVChart.Location = new System.Drawing.Point(12, 57);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 437);
@@ -112,6 +113,7 @@ namespace TaikoMapSVViewer
             this.ClientSize = new System.Drawing.Size(875, 506);
             this.Controls.Add(this.SVChart);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.Location = new System.Drawing.Point(2000, 0);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
