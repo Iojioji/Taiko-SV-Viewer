@@ -162,6 +162,7 @@ namespace TaikoMapSVViewer
                 //TODO: Load markerstyle and line color from settings
                 series.MarkerStyle = MarkerStyle.Circle;
                 series.MarkerSize = 0;
+                series.MarkerColor = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
                 series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 SVChart.Series.Add(series);
@@ -176,7 +177,7 @@ namespace TaikoMapSVViewer
             SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
             double lastObejctSeconds = lastObject / 1000;
-            SVChart.ChartAreas[0].AxisX.Interval = lastObejctSeconds / 5 >= 10 ? (lastObejctSeconds / 10 >= 10 ? (lastObejctSeconds / 15 >= 10 ? 30 : 15) : 10) : 5;
+            SVChart.ChartAreas[0].AxisX.Interval = lastObejctSeconds / 5 >= 10 ? (lastObejctSeconds / 10 >= 10 ? (lastObejctSeconds / 15 >= 10 ? (lastObejctSeconds / 20 >= 10 ? 30 : 20) : 15) : 10) : 5;
 
 
             SVChart.ChartAreas[0].AxisX.LineColor = Color.Black;
