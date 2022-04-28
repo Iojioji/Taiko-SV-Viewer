@@ -144,8 +144,8 @@ namespace TaikoMapSVViewer
         void DrawChart()
         {
             SVChart.Series.Clear();
-            double minVal = Math.Round(ctp.GetLowestBPMSV());
-            double maxVal = Math.Round(ctp.GetHighestBPMSV());
+            double minVal = GetLowestSV();
+            double maxVal = GetHighestSV();
 
             for (int i = 0; i < chartSections.Count; i++)
             {
@@ -198,6 +198,32 @@ namespace TaikoMapSVViewer
 
             SVChart.Series[0].ToolTip = $"{"#VAL":F2} BPM, {"#VALX":F2} seconds, ";
 
+        }
+        double GetLowestSV()
+        {
+            double result = -1;
+            if (chartSections.Count > 0)
+            {
+                foreach (ChartSection section in chartSections)
+                {
+                    double sectionLowestSV = section.GetLowestSV();
+                    result = result == -1 ? sectionLowestSV : (result > sectionLowestSV ? sectionLowestSV : result);
+                }
+            }
+            return Math.Round(result);
+        }
+        double GetHighestSV()
+        {
+            double result = -1;
+            if (chartSections.Count > 0)
+            {
+                foreach (ChartSection section in chartSections)
+                {
+                    double sectionHighestSV = section.GetHighestSV();
+                    result = result == -1 ? sectionHighestSV : (result < sectionHighestSV ? sectionHighestSV : result);
+                }
+            }
+            return Math.Round(result);
         }
         void SetChartMarkerSize(int size)
         {
@@ -379,7 +405,6 @@ namespace TaikoMapSVViewer
             double yAxisSize = isYZoomed ? SVChart.ChartAreas[0].AxisY.ScaleView.Size : 0;
 
             Console.WriteLine($"New Selection!: ({isXZoomed}, {isYZoomed}) ({newXSelStart}, {newXSelEnd}), ({newYSelStart}, {newYSelEnd}) ---- ({xAxisSize}, {yAxisSize})");
-
 
             if (isXZoomed && !isYZoomed)
             {

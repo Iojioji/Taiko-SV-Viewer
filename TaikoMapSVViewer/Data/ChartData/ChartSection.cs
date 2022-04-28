@@ -54,5 +54,32 @@ namespace TaikoMapSVViewer.Data.ChartData
         {
             _objectCollection.Add(new ObjectSV(sv, millis));
         }
+
+        public double GetLowestSV()
+        {
+            double result = -1;
+            if (_objectCollection.Count == 0)
+            {
+                Console.Write($"Collection was empty wtf???");
+                return result;
+            }
+
+            result = _objectCollection.OrderBy(x => x.SV).ToList()[0].SV;
+
+            return result;
+        }
+        public double GetHighestSV()
+        {
+            double result = -1;
+            if (_objectCollection.Count == 0)
+            {
+                Console.Write($"Collection was empty wtf???");
+                return result;
+            }
+
+            result = _objectCollection.OrderByDescending(x => x.SV).ToList()[0].SV;
+
+            return result;
+        }
     }
 }
