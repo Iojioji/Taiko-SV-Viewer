@@ -146,6 +146,7 @@ namespace TaikoMapSVViewer
             SVChart.Series.Clear();
             double minVal = GetLowestSV();
             double maxVal = GetHighestSV();
+            int lastObject = 0;
 
             for (int i = 0; i < chartSections.Count; i++)
             {
@@ -164,17 +165,18 @@ namespace TaikoMapSVViewer
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
                 series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
                 SVChart.Series.Add(series);
+                lastObject = section.GetLastMilli();
             }
 
             SVChart.ChartAreas[0].AxisX.Minimum = 0;
             //SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
-            List<int> lastPointMillis = chartSections[chartSections.Count - 1].GetMillis();
-            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(lastPointMillis[lastPointMillis.Count - 1] * 1.02 / 1000.0);
+            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(lastObject * 1.02 / 1000.0);
 
             SVChart.ChartAreas[0].AxisY.Minimum = minVal - 10;
             SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
             SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
-            SVChart.ChartAreas[0].AxisX.Interval = 30;
+            double lastObejctSeconds = lastObject / 1000;
+            SVChart.ChartAreas[0].AxisX.Interval = lastObejctSeconds / 5 >= 10 ? (lastObejctSeconds / 10 >= 10 ? (lastObejctSeconds / 15 >= 10 ? 30 : 15) : 10) : 5;
 
 
             SVChart.ChartAreas[0].AxisX.LineColor = Color.Black;

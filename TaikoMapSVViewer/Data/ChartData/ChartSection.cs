@@ -81,5 +81,9 @@ namespace TaikoMapSVViewer.Data.ChartData
 
             return result;
         }
+        public int GetLastMilli()
+        {
+            return _objectCollection.Last().Time;
+        }
     }
 }
