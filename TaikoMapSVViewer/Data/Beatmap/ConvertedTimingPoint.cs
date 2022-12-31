@@ -70,19 +70,20 @@ namespace TaikoMapSVViewer
             return timingPoints[timingPoints.Count - 1].GetLastOffset();
         }
 
-        public double GetNoteAdjustedBPM(HitObject toCheck)
+        //public double GetNoteAdjustedBPM(HitObject toCheck)
+        public double GetNoteAdjustedBPM(int offsetToCheck)
         {
             double result = 0;
             double adjustedBPM = 0;
             if (timingPoints.Count > 1)
             {
                 //Check more uninherited points.
-                adjustedBPM = GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
+                adjustedBPM = GetClosestRedTimingPoint(offsetToCheck).GetClosestGreenTimingPoint(offsetToCheck).AdjustedBPM;
             }
             else
             {
                 //Only one uninherited point, search inside that one.
-                adjustedBPM = timingPoints[0].GetClosestGreenTimingPoint(toCheck).AdjustedBPM;
+                adjustedBPM = timingPoints[0].GetClosestGreenTimingPoint(offsetToCheck).AdjustedBPM;
             }
 
             result = adjustedBPM * (sliderMultiplier / 1.4);
@@ -95,23 +96,24 @@ namespace TaikoMapSVViewer
 
             if (timingPoints.Count > 1)
             {
-                return GetClosestRedTimingPoint(toCheck).GetClosestGreenTimingPoint(toCheck).IsKiai;
+                return GetClosestRedTimingPoint(toCheck.StartTime).GetClosestGreenTimingPoint(toCheck.StartTime).IsKiai;
             }
             else
             {
-                return timingPoints[0].GetClosestGreenTimingPoint(toCheck).IsKiai;
+                return timingPoints[0].GetClosestGreenTimingPoint(toCheck.StartTime).IsKiai;
             }
 
             return result;
         }
 
-        UninheritedTimingPoint GetClosestRedTimingPoint(HitObject toCheck)
+        //UninheritedTimingPoint GetClosestRedTimingPoint(HitObject toCheck)
+        UninheritedTimingPoint GetClosestRedTimingPoint(int offsetToCheck)
         {
             UninheritedTimingPoint aux = null;
             int earliestIndex = -1;
             for (int i = timingPoints.Count - 1; i >= 0; i--)
             {
-                if (timingPoints[i].TimingPoint.Offset <= toCheck.StartTime)
+                if (timingPoints[i].TimingPoint.Offset <= offsetToCheck)
                 {
                     earliestIndex = i;
                     aux = timingPoints[i];
@@ -170,13 +172,14 @@ namespace TaikoMapSVViewer
             else
                 return _point.Offset;
         }
-        public InheritedTimingPoint GetClosestGreenTimingPoint(HitObject toCheck)
+        //public InheritedTimingPoint GetClosestGreenTimingPoint(HitObject toCheck)
+        public InheritedTimingPoint GetClosestGreenTimingPoint(int offsetToCheck)
         {
             InheritedTimingPoint aux = null;
             int earliestIndex = -1;
             for (int i = _inheritedTimingPoints.Count - 1; i >= 0; i--)
             {
-                if (_inheritedTimingPoints[i].TimingPoint.Offset <= toCheck.StartTime)
+                if (_inheritedTimingPoints[i].TimingPoint.Offset <= offsetToCheck)
                 {
                     aux = _inheritedTimingPoints[i];
                     break;

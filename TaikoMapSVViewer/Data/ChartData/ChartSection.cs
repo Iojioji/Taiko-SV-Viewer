@@ -81,6 +81,14 @@ namespace TaikoMapSVViewer.Data.ChartData
 
             return result;
         }
+
+        public void UpdateSV(ConvertedTimingPoint ctp)
+        {
+            foreach (ObjectSV objectSV in _objectCollection)
+            {
+                objectSV.SV = ctp.GetNoteAdjustedBPM(objectSV.Time);
+            }
+        }
         public int GetLastMilli()
         {
             return _objectCollection.Last().Time;

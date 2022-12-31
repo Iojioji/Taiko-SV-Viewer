@@ -15,6 +15,7 @@ namespace TaikoMapSVViewer.Data.ChartData
         public double SV
         {
             get { return _SV; }
+            set { _SV = value; }
         }
         public int Time
         {

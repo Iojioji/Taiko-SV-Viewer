@@ -13,13 +13,14 @@ using System.Diagnostics;
 using TaikoMapSVViewer.Settings;
 using AutoUpdaterDotNET;
 using System.IO;
+using System.Linq;
 
 namespace TaikoMapSVViewer
 {
     public partial class MainForm : Form
     {
         Beatmap currentBeatmap;
-        ConvertedTimingPoint ctp = new ConvertedTimingPoint();
+        ConvertedTimingPoint baseCTP = new ConvertedTimingPoint();
 
         List<ChartSection> chartSections = new List<ChartSection>();
 
@@ -65,10 +66,52 @@ namespace TaikoMapSVViewer
             {
                 Console.WriteLine($"Gonna check this map lmao: '{beatmapPath}'");
                 currentBeatmap = BeatmapDecoder.Decode(beatmapPath);
-                ctp = new ConvertedTimingPoint();
+                baseCTP = new ConvertedTimingPoint();
+
                 LoadConvertedTimingPoints(currentBeatmap);
                 LoadHitObjects(currentBeatmap);
-                DrawChart();
+
+                //double minVal = Math.Round(baseCTP.GetLowestBPMSV());
+                //double maxVal = Math.Round(baseCTP.GetHighestBPMSV());
+
+                double minVal = GetLowestSV();
+                double maxVal = GetHighestSV();
+
+                int lastObject = chartSections.Last().GetLastMilli();
+
+                SVChart.Series.Clear();
+
+                DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), "NM");
+
+                var baseSliderMultiplier = baseCTP.SliderMultiplier;
+
+                ////If EZ is checked
+                //if (true)
+                //{
+                //    baseCTP.SliderMultiplier = baseSliderMultiplier * 0.8;
+                //    foreach (ChartSection section in chartSections)
+                //    {
+                //        section.UpdateSV(baseCTP);
+                //    }
+                //    DrawChart(Color.Blue, Color.LightBlue, "EZ");
+
+                //    minVal = Math.Min(minVal, Math.Round(baseCTP.GetLowestBPMSV()));
+                //}
+                ////If HR is checked
+                //if (true)
+                //{
+                //    baseCTP.SliderMultiplier = baseSliderMultiplier * (1.4 * 4 / 3);
+                //    foreach (ChartSection section in chartSections)
+                //    {
+                //        section.UpdateSV(baseCTP);
+                //    }
+                //    DrawChart(Color.Red, Color.OrangeRed, "HR");
+
+                //    maxVal = Math.Max(maxVal, Math.Round(baseCTP.GetHighestBPMSV()));
+                //}
+
+                SetupChart(minVal, maxVal, lastObject);
+
                 SetWindowTitle(currentBeatmap.MetadataSection);
             }
             catch (Exception ex)
@@ -79,10 +122,10 @@ namespace TaikoMapSVViewer
         }
         void LoadConvertedTimingPoints(Beatmap toLoad)
         {
-            ctp.SliderMultiplier = toLoad.DifficultySection.SliderMultiplier;
+            baseCTP.SliderMultiplier = toLoad.DifficultySection.SliderMultiplier;
             foreach (TimingPoint tp in toLoad.TimingPoints)
             {
-                ctp.AddTimingPoint(tp);
+                baseCTP.AddTimingPoint(tp);
             }
         }
         void LoadHitObjects(Beatmap toLoad)
@@ -93,7 +136,7 @@ namespace TaikoMapSVViewer
             for (int i = 0; i < toLoad.HitObjects.Count; i++)
             {
                 HitObject ho = toLoad.HitObjects[i];
-                bool isKiai = ctp.IsNoteInKiai(ho);
+                bool isKiai = baseCTP.IsNoteInKiai(ho);
 
                 ///If there are no chartSections, create one.
                 ///     You gotta check if the first timing point starts with a kiai
@@ -106,10 +149,10 @@ namespace TaikoMapSVViewer
                 }
                 else if (isKiai != previousNoteWasKiai)
                 {
-                    chartSections[chartSections.Count - 1].AddObject(ctp.GetNoteAdjustedBPM(ho), ho.StartTime);
+                    chartSections[chartSections.Count - 1].AddObject(baseCTP.GetNoteAdjustedBPM(ho.StartTime), ho.StartTime);
                     chartSections.Add(new ChartSection(isKiai));
                 }
-                chartSections[chartSections.Count - 1].AddObject(ctp.GetNoteAdjustedBPM(ho), ho.StartTime);
+                chartSections[chartSections.Count - 1].AddObject(baseCTP.GetNoteAdjustedBPM(ho.StartTime), ho.StartTime);
 
                 ///if (ho.GetType() == typeof(TaikoHit))
                 ///{
@@ -141,18 +184,13 @@ namespace TaikoMapSVViewer
             return seconds;
         }
 
-        void DrawChart()
+        void DrawChart(Color normalColor, Color kiaiColor, string seriesName)
         {
-            SVChart.Series.Clear();
-            double minVal = GetLowestSV();
-            double maxVal = GetHighestSV();
-            int lastObject = 0;
-
             for (int i = 0; i < chartSections.Count; i++)
             {
                 ChartSection section = chartSections[i];
 
-                var series = new Series($"SVs-{i}");
+                var series = new Series($"SVs-{seriesName}{i}");
 
                 series.Points.DataBindXY(MillisToSeconds(section.GetMillis()), section.GetSVs());
                 series.ChartType = SeriesChartType.Line;
@@ -162,13 +200,14 @@ namespace TaikoMapSVViewer
                 //TODO: Load markerstyle and line color from settings
                 series.MarkerStyle = MarkerStyle.Circle;
                 series.MarkerSize = 0;
-                series.MarkerColor = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
+                series.MarkerColor = section.IsKiai ? kiaiColor : normalColor;
                 //series.Color = section.IsKiai ? Color.Orange : Color.DarkGreen;
-                series.Color = section.IsKiai ? Color.FromArgb(255, 106, 0) : Color.DarkGreen;
+                series.Color = section.IsKiai ? kiaiColor : normalColor;
                 SVChart.Series.Add(series);
-                lastObject = section.GetLastMilli();
             }
-
+        }
+        void SetupChart(double minVal, double maxVal, int lastObject)
+        {
             SVChart.ChartAreas[0].AxisX.Minimum = 0;
             //SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
             SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(lastObject * 1.02 / 1000.0);
@@ -199,8 +238,11 @@ namespace TaikoMapSVViewer
             SVChart.ChartAreas[0].CursorY.AutoScroll = true;
             SVChart.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
 
-            SVChart.Series[0].ToolTip = $"{"#VAL":F2} BPM, {"#VALX":F2} seconds, ";
-
+            foreach (Series series in SVChart.Series)
+            {
+                series.ToolTip = $"{"#VALY":F2} BPM, {"#VALX":F2} seconds";
+            }
+            //SVChart.Series[0].ToolTip = $"{"#VALY":F2} BPM, {"#VALX":F2} seconds";
         }
         double GetLowestSV()
         {
