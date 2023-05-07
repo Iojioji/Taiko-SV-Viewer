@@ -85,7 +85,7 @@ namespace TaikoMapSVViewer
 
                 var baseSliderMultiplier = baseCTP.SliderMultiplier;
 
-                ////If EZ is checked
+                //If EZ is checked
                 //if (true)
                 //{
                 //    baseCTP.SliderMultiplier = baseSliderMultiplier * 0.8;
