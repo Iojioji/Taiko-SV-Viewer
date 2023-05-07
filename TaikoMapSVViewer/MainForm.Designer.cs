@@ -30,7 +30,7 @@ namespace TaikoMapSVViewer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,8 +103,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea1);
+            chartArea3.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea3);
             this.SVChart.Location = new System.Drawing.Point(12, 57);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 437);
@@ -156,7 +156,7 @@ namespace TaikoMapSVViewer
             // AutoUpdateCheckbox
             // 
             this.AutoUpdateCheckbox.AutoSize = true;
-            this.AutoUpdateCheckbox.Location = new System.Drawing.Point(15, 20);
+            this.AutoUpdateCheckbox.Location = new System.Drawing.Point(15, 24);
             this.AutoUpdateCheckbox.Name = "AutoUpdateCheckbox";
             this.AutoUpdateCheckbox.Size = new System.Drawing.Size(155, 17);
             this.AutoUpdateCheckbox.TabIndex = 5;
