@@ -23,7 +23,14 @@ namespace TaikoMapSVViewer
             }
             else
             {
-                timingPoints[timingPoints.Count - 1].AddInheritedPoint(toAdd);
+                if (timingPoints.Count > 0)
+                {
+                    timingPoints[timingPoints.Count - 1].AddInheritedPoint(toAdd);
+                }
+                else
+                {
+                    Console.WriteLine("Map started with a green line instead of a red line, watch out bro");
+                }
             }
         }
 

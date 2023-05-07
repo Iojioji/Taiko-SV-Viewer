@@ -6,6 +6,7 @@ using OsuParsers.Beatmaps;
 using OsuParsers.Decoders;
 using OsuParsers.Beatmaps.Objects;
 using OsuParsers.Beatmaps.Sections;
+using OsuMemoryDataProvider;
 using System.Windows.Forms.DataVisualization.Charting;
 using TaikoMapSVViewer.Data.ChartData;
 using System.Reflection;
@@ -14,17 +15,33 @@ using TaikoMapSVViewer.Settings;
 using AutoUpdaterDotNET;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace TaikoMapSVViewer
 {
     public partial class MainForm : Form
     {
         Beatmap currentBeatmap;
+
+        string userSongsFolder = null;
+
+        IOsuMemoryReader osuReader;
+
+        bool hooked = false;
+        bool? gameLoaded = false;
+        bool inMapSelectScreen = false;
+
         ConvertedTimingPoint baseCTP = new ConvertedTimingPoint();
 
         List<ChartSection> chartSections = new List<ChartSection>();
 
+        Color controlColor;
+
+        string previousLoadedBeatmap = "";
         string currentLoadedBeatmap = "";
+
+
         //int numberOfZoom = 0;
         int maxMarkerSize = 30;
         bool HasBeatmap
@@ -48,10 +65,20 @@ namespace TaikoMapSVViewer
             //Assembly assembly = Assembly.GetExecutingAssembly();
             //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             //string assemblyVersion = fvi.FileVersion;
+            SettingsManager.Init();
+
+            controlColor = BeatmapUpdateLabel.BackColor;
 
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
 
             SettingsManager.Version = ver.ToString();
+
+            AutoUpdateCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
+
+            osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
+
+            OsuRunningTimer.Start();
+            BeatmapUpdateTimer.Start();
 
             this.AllowDrop = true;
         }
@@ -113,10 +140,12 @@ namespace TaikoMapSVViewer
                 SetupChart(minVal, maxVal, lastObject);
 
                 SetWindowTitle(currentBeatmap.MetadataSection);
+                currentLoadedBeatmap = beatmapPath;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it)\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                currentLoadedBeatmap = "";
             }
             UpdateRefreshButton();
         }
@@ -210,11 +239,11 @@ namespace TaikoMapSVViewer
         {
             SVChart.ChartAreas[0].AxisX.Minimum = 0;
             //SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(ctp.GetLastOffset() * 1.02 / 1000.0);
-            SVChart.ChartAreas[0].AxisX.Maximum = Math.Round(lastObject * 1.02 / 1000.0);
+            SVChart.ChartAreas[0].AxisX.Maximum = System.Math.Round(lastObject * 1.02 / 1000.0);
 
             SVChart.ChartAreas[0].AxisY.Minimum = minVal - 10;
             SVChart.ChartAreas[0].AxisY.Maximum = maxVal + 10;
-            SVChart.ChartAreas[0].AxisY.Interval = (int)Math.Round((maxVal - minVal) / 10);
+            SVChart.ChartAreas[0].AxisY.Interval = (int)System.Math.Round((maxVal - minVal) / 10);
             double lastObejctSeconds = lastObject / 1000;
             SVChart.ChartAreas[0].AxisX.Interval = lastObejctSeconds / 5 >= 10 ? (lastObejctSeconds / 10 >= 10 ? (lastObejctSeconds / 15 >= 10 ? (lastObejctSeconds / 20 >= 10 ? 30 : 20) : 15) : 10) : 5;
 
@@ -255,7 +284,7 @@ namespace TaikoMapSVViewer
                     result = result == -1 ? sectionLowestSV : (result > sectionLowestSV ? sectionLowestSV : result);
                 }
             }
-            return Math.Round(result);
+            return System.Math.Round(result);
         }
         double GetHighestSV()
         {
@@ -268,7 +297,7 @@ namespace TaikoMapSVViewer
                     result = result == -1 ? sectionHighestSV : (result < sectionHighestSV ? sectionHighestSV : result);
                 }
             }
-            return Math.Round(result);
+            return System.Math.Round(result);
         }
         void SetChartMarkerSize(int size)
         {
@@ -349,18 +378,116 @@ namespace TaikoMapSVViewer
             }
         }
 
+        private void BeatmapUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (!SettingsManager.AutoUpdateSelectedMap)
+            {
+                return;
+            }
+            if (gameLoaded == false || gameLoaded == null || !inMapSelectScreen)
+            {
+                BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
+                BeatmapUpdateLabel.BackColor = controlColor;
+
+                return;
+            }
+
+            string beatmapFilename = osuReader.GetOsuFileName();
+            string beatmapFolder = osuReader.GetMapFolderName();
+
+            var invalidChars = Path.GetInvalidPathChars();
+
+            if (string.IsNullOrWhiteSpace(beatmapFilename) || beatmapFilename.Any(c => invalidChars.Contains(c)))
+            {
+                Console.WriteLine($"Error: beatmap had invalid characters");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(beatmapFolder) || beatmapFolder.Any(c => invalidChars.Contains(c)))
+            {
+                Console.WriteLine($"Error: folder had invalid characters");
+                return;
+            }
+
+            if (previousLoadedBeatmap != null && previousLoadedBeatmap == beatmapFilename)
+                return;
+            previousLoadedBeatmap = beatmapFilename;
+
+            string absoluteFilename = Path.Combine(userSongsFolder, beatmapFolder.TrimEnd(), beatmapFilename);
+            if (!File.Exists(absoluteFilename))
+            {
+                Console.WriteLine($"AbsoluteFile doesn't exist! ({absoluteFilename})");
+                return;
+            }
+
+            //BeatmapUpdateLabel.Text = $"{beatmapFolder} - {beatmapFilename}";
+            BeatmapUpdateLabel.Text = $"{absoluteFilename}";
+            BeatmapUpdateLabel.BackColor = Color.LightGreen;
+
+            ParseBeatmap(absoluteFilename);
+        }
+        private async void OsuRunningTimer_Tick(object sender, EventArgs e)
+        {
+            var processes = Process.GetProcessesByName("osu!");
+
+            if (processes.Length == 0)
+                gameLoaded = false;
+            else
+            {
+                if (gameLoaded == false)
+                {
+                    await Task.Run(() => Thread.Sleep(5000));
+                    gameLoaded = true;
+                }
+                else if (gameLoaded == null)
+                {
+                    gameLoaded = true;
+                }
+
+                if (userSongsFolder == null || userSongsFolder == "")
+                {
+                    var osuExePath = processes[0].MainModule.FileName;
+                    userSongsFolder = Path.Combine(Path.GetDirectoryName(osuExePath), "Songs");
+                    SettingsManager.SongsFolder = userSongsFolder;
+                }
+            }
+
+            int intStatus = 0;
+            osuReader.GetCurrentStatus(out intStatus);
+            OsuMemoryStatus status = (OsuMemoryStatus)intStatus;
+
+            if (status == OsuMemoryStatus.SongSelect || status == OsuMemoryStatus.SongSelectEdit || status == OsuMemoryStatus.MultiplayerRoom || status == OsuMemoryStatus.MultiplayerSongSelect)
+                inMapSelectScreen = true;
+            else
+                inMapSelectScreen = false;
+
+            OsuRunningLabel.Text = gameLoaded == true ? "OsuRunning: True" : "OsuRunning: False";
+            OsuRunningLabel.BackColor = gameLoaded == true ? Color.LightGreen : Color.Red;
+
+            InMapSelect.Text = inMapSelectScreen ? "SelectingMap: True" : "SelectingMap: False";
+            InMapSelect.BackColor = inMapSelectScreen ? Color.LightGreen : Color.Red;
+        }
+
+
         private void LoadBeatmap_Click(object sender, EventArgs e)
         {
+
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "osu beatmap files (*.osu)|*.osu";
                 openFileDialog.FilterIndex = 0;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    currentLoadedBeatmap = openFileDialog.FileName;
-                    ParseBeatmap(currentLoadedBeatmap);
+                    ParseBeatmap(openFileDialog.FileName);
                 }
             }
+        }
+
+        private void AutoUpdateCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SettingsManager.AutoUpdateSelectedMap == AutoUpdateCheckbox.Checked)
+                return;
+
+            SettingsManager.AutoUpdateSelectedMap = AutoUpdateCheckbox.Checked;
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
@@ -511,10 +638,9 @@ namespace TaikoMapSVViewer
             if (files.Length > 0)
             {
                 //TODO: Load all files dragged in
-                if (files[0].Substring(Math.Max(0, files[0].Length - 4)) == ".osu")
+                if (files[0].Substring(System.Math.Max(0, files[0].Length - 4)) == ".osu")
                 {
-                    currentLoadedBeatmap = files[0];
-                    ParseBeatmap(currentLoadedBeatmap);
+                    ParseBeatmap(files[0]);
                 }
                 else
                 {
@@ -523,5 +649,6 @@ namespace TaikoMapSVViewer
             }
         }
         #endregion
+
     }
 }

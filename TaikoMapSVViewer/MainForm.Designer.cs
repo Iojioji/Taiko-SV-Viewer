@@ -29,6 +29,7 @@ namespace TaikoMapSVViewer
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,6 +38,12 @@ namespace TaikoMapSVViewer
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateStripButt = new System.Windows.Forms.ToolStripMenuItem();
             this.SVChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.BeatmapUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.OsuRunningTimer = new System.Windows.Forms.Timer(this.components);
+            this.OsuRunningLabel = new System.Windows.Forms.Label();
+            this.BeatmapUpdateLabel = new System.Windows.Forms.Label();
+            this.InMapSelect = new System.Windows.Forms.Label();
+            this.AutoUpdateCheckbox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).BeginInit();
             this.SuspendLayout();
@@ -106,11 +113,66 @@ namespace TaikoMapSVViewer
             this.SVChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.SVChartSelectionRangeChanged);
             this.SVChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.SVChartAxisChanged);
             // 
+            // BeatmapUpdateTimer
+            // 
+            this.BeatmapUpdateTimer.Interval = 20;
+            this.BeatmapUpdateTimer.Tick += new System.EventHandler(this.BeatmapUpdateTimer_Tick);
+            // 
+            // OsuRunningTimer
+            // 
+            this.OsuRunningTimer.Interval = 500;
+            this.OsuRunningTimer.Tick += new System.EventHandler(this.OsuRunningTimer_Tick);
+            // 
+            // OsuRunningLabel
+            // 
+            this.OsuRunningLabel.Enabled = false;
+            this.OsuRunningLabel.Location = new System.Drawing.Point(289, 24);
+            this.OsuRunningLabel.Name = "OsuRunningLabel";
+            this.OsuRunningLabel.Size = new System.Drawing.Size(115, 13);
+            this.OsuRunningLabel.TabIndex = 2;
+            this.OsuRunningLabel.Text = "OsuRunning: False";
+            this.OsuRunningLabel.Visible = false;
+            // 
+            // BeatmapUpdateLabel
+            // 
+            this.BeatmapUpdateLabel.Enabled = false;
+            this.BeatmapUpdateLabel.Location = new System.Drawing.Point(12, 41);
+            this.BeatmapUpdateLabel.Name = "BeatmapUpdateLabel";
+            this.BeatmapUpdateLabel.Size = new System.Drawing.Size(851, 13);
+            this.BeatmapUpdateLabel.TabIndex = 3;
+            this.BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
+            this.BeatmapUpdateLabel.Visible = false;
+            // 
+            // InMapSelect
+            // 
+            this.InMapSelect.Enabled = false;
+            this.InMapSelect.Location = new System.Drawing.Point(410, 24);
+            this.InMapSelect.Name = "InMapSelect";
+            this.InMapSelect.Size = new System.Drawing.Size(115, 13);
+            this.InMapSelect.TabIndex = 4;
+            this.InMapSelect.Text = "SelectingMap: False";
+            this.InMapSelect.Visible = false;
+            // 
+            // AutoUpdateCheckbox
+            // 
+            this.AutoUpdateCheckbox.AutoSize = true;
+            this.AutoUpdateCheckbox.Location = new System.Drawing.Point(15, 20);
+            this.AutoUpdateCheckbox.Name = "AutoUpdateCheckbox";
+            this.AutoUpdateCheckbox.Size = new System.Drawing.Size(155, 17);
+            this.AutoUpdateCheckbox.TabIndex = 5;
+            this.AutoUpdateCheckbox.Text = "Auto Update Selected Map";
+            this.AutoUpdateCheckbox.UseVisualStyleBackColor = true;
+            this.AutoUpdateCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateCheckbox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(875, 506);
+            this.Controls.Add(this.AutoUpdateCheckbox);
+            this.Controls.Add(this.InMapSelect);
+            this.Controls.Add(this.BeatmapUpdateLabel);
+            this.Controls.Add(this.OsuRunningLabel);
             this.Controls.Add(this.SVChart);
             this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
@@ -139,6 +201,12 @@ namespace TaikoMapSVViewer
         private System.Windows.Forms.ToolStripMenuItem toolStripRefresh;
         private System.Windows.Forms.ToolStripMenuItem updateStripButt;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.Timer BeatmapUpdateTimer;
+        private System.Windows.Forms.Timer OsuRunningTimer;
+        private System.Windows.Forms.Label OsuRunningLabel;
+        private System.Windows.Forms.Label BeatmapUpdateLabel;
+        private System.Windows.Forms.Label InMapSelect;
+        private System.Windows.Forms.CheckBox AutoUpdateCheckbox;
     }
 }
 
