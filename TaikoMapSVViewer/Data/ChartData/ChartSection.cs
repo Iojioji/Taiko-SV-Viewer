@@ -52,6 +52,15 @@ namespace TaikoMapSVViewer.Data.ChartData
 
         public void AddObject(double sv, int millis)
         {
+            if (Double.IsInfinity(sv))
+            {
+                Console.WriteLine($"Aqui merengues ({sv} at [{millis}])");
+                sv = 1500;
+            }
+            else if (sv > 2000)
+            {
+                sv = 1500;
+            }
             _objectCollection.Add(new ObjectSV(sv, millis));
         }
 
@@ -77,7 +86,22 @@ namespace TaikoMapSVViewer.Data.ChartData
                 return result;
             }
 
-            result = _objectCollection.OrderByDescending(x => x.SV).ToList()[0].SV;
+            //result = _objectCollection.OrderByDescending(x => x.SV).ToList()[0].SV;
+
+            List<ObjectSV> orderedList = _objectCollection.OrderByDescending(x => x.SV).ToList();
+            for (int i = 0; i < orderedList.Count; i++)
+            {
+                result = orderedList[i].SV;
+                if (!Double.IsInfinity(orderedList[i].SV))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine($"Section had infinity object lmao");
+                }
+            }
+
 
             return result;
         }

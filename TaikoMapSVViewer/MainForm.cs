@@ -217,6 +217,10 @@ namespace TaikoMapSVViewer
         {
             for (int i = 0; i < chartSections.Count; i++)
             {
+                if (i == 26)
+                {
+                    Console.WriteLine("Ay wey");
+                }
                 ChartSection section = chartSections[i];
 
                 var series = new Series($"SVs-{seriesName}{i}");
@@ -291,10 +295,13 @@ namespace TaikoMapSVViewer
             double result = -1;
             if (chartSections.Count > 0)
             {
+                int index = 0;
                 foreach (ChartSection section in chartSections)
                 {
+                    Console.WriteLine($"Checkign section {index}");
                     double sectionHighestSV = section.GetHighestSV();
                     result = result == -1 ? sectionHighestSV : (result < sectionHighestSV ? sectionHighestSV : result);
+                    index++;
                 }
             }
             return System.Math.Round(result);

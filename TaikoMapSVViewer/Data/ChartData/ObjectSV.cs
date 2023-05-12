@@ -27,5 +27,11 @@ namespace TaikoMapSVViewer.Data.ChartData
             _time = time;
             _SV = sv;
         }
+
+        public override string ToString()
+        {
+            string result = $"{_SV} at [{_time}]";
+            return result;
+        }
     }
 }
