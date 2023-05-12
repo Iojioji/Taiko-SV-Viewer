@@ -9,6 +9,7 @@ using OsuParsers.Beatmaps.Sections;
 using OsuMemoryDataProvider;
 using System.Windows.Forms.DataVisualization.Charting;
 using TaikoMapSVViewer.Data.ChartData;
+using TaikoMapSVViewer.Data.MemoryReader;
 using System.Reflection;
 using System.Diagnostics;
 using TaikoMapSVViewer.Settings;
@@ -460,6 +461,22 @@ namespace TaikoMapSVViewer
 
             int intStatus = 0;
             osuReader.GetCurrentStatus(out intStatus);
+
+            //TODO: Make this update the thing yes yes.
+            //Just check if you're using HR or EZ when mods change.
+            //If they changed, set the var to NM, HR or EZ and update the graph pls.
+
+            //var a = new Mods();
+            //a.ModsXor1 = osuReader.GetMods();
+            //a.ModsXor2 = osuReader.GetMods();
+
+            //ReaderMods a = (ReaderMods)osuReader.GetMods();
+
+            //string aa = a.ToString();
+
+            //Console.WriteLine($"a: {a} ({aa}) Mods: {Convert.ToInt32(osuReader.GetMods())}, PlayingMods: {osuReader.GetPlayingMods()}");
+
+
             OsuMemoryStatus status = (OsuMemoryStatus)intStatus;
 
             if (status == OsuMemoryStatus.SongSelect || status == OsuMemoryStatus.SongSelectEdit || status == OsuMemoryStatus.MultiplayerRoom || status == OsuMemoryStatus.MultiplayerSongSelect)
