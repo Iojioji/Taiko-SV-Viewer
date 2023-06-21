@@ -42,6 +42,8 @@ namespace TaikoMapSVViewer
         string previousLoadedBeatmap = "";
         string currentLoadedBeatmap = "";
 
+        string currentMod = "NM";
+        string previousMod = "NM";
 
         //int numberOfZoom = 0;
         int maxMarkerSize = 30;
@@ -74,7 +76,8 @@ namespace TaikoMapSVViewer
 
             SettingsManager.Version = ver.ToString();
 
-            AutoUpdateCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
+            AutoUpdateMapCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
+            AutoUpdateModCheckbox.Checked = SettingsManager.AutoUpdateMod;
 
             osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
 
@@ -102,16 +105,27 @@ namespace TaikoMapSVViewer
                 //double minVal = Math.Round(baseCTP.GetLowestBPMSV());
                 //double maxVal = Math.Round(baseCTP.GetHighestBPMSV());
 
+                SVChart.Series.Clear();
+
+                double baseSliderMultiplier = baseCTP.SliderMultiplier;
+                double sliderModMultiplier = currentMod == "HR" ? (1.4 * 4 / 3) : currentMod == "EZ" ? 0.8 : 1;
+
+                baseCTP.SliderMultiplier = baseSliderMultiplier * sliderModMultiplier;
+                if (sliderModMultiplier != 1)
+                {
+                    foreach (ChartSection section in chartSections)
+                    {
+                        section.UpdateSV(baseCTP);
+                    }
+                }
+
                 double minVal = GetLowestSV();
                 double maxVal = GetHighestSV();
 
                 int lastObject = chartSections.Last().GetLastMilli();
 
-                SVChart.Series.Clear();
+                DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), currentMod);
 
-                DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), "NM");
-
-                var baseSliderMultiplier = baseCTP.SliderMultiplier;
 
                 //If EZ is checked
                 //if (true)
@@ -416,9 +430,14 @@ namespace TaikoMapSVViewer
                 return;
             }
 
-            if (previousLoadedBeatmap != null && previousLoadedBeatmap == beatmapFilename)
+            //If previousLoadedBeatmap isnt null and the previousLoadedBeatmap is the same as the one running rn
+            //If it has a different mod tho, load it up.
+
+            if (previousLoadedBeatmap != null && (previousLoadedBeatmap == beatmapFilename && (previousMod == currentMod)))
                 return;
+
             previousLoadedBeatmap = beatmapFilename;
+            previousMod = currentMod;
 
             string absoluteFilename = Path.Combine(userSongsFolder, beatmapFolder.TrimEnd(), beatmapFilename);
             if (!File.Exists(absoluteFilename))
@@ -470,11 +489,30 @@ namespace TaikoMapSVViewer
             //a.ModsXor1 = osuReader.GetMods();
             //a.ModsXor2 = osuReader.GetMods();
 
-            //ReaderMods a = (ReaderMods)osuReader.GetMods();
+            if (SettingsManager.AutoUpdateMod)
+            {
+                ReaderMods a = (ReaderMods)osuReader.GetMods();
+                string aa = a.ToString();
 
-            //string aa = a.ToString();
+                //Console.WriteLine($"a: {a} ({aa}) Mods: {Convert.ToInt32(osuReader.GetMods())}, PlayingMods: {osuReader.GetPlayingMods()}");
 
-            //Console.WriteLine($"a: {a} ({aa}) Mods: {Convert.ToInt32(osuReader.GetMods())}, PlayingMods: {osuReader.GetPlayingMods()}");
+                if (aa.Contains("HR"))
+                {
+                    currentMod = "HR";
+                }
+                else if (aa.Contains("EZ"))
+                {
+                    currentMod = "EZ";
+                }
+                else
+                {
+                    currentMod = "NM";
+                }
+            }
+            else
+            {
+                currentMod = "NM";
+            }
 
 
             OsuMemoryStatus status = (OsuMemoryStatus)intStatus;
@@ -508,10 +546,16 @@ namespace TaikoMapSVViewer
 
         private void AutoUpdateCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            if (SettingsManager.AutoUpdateSelectedMap == AutoUpdateCheckbox.Checked)
+            if (SettingsManager.AutoUpdateSelectedMap == AutoUpdateMapCheckbox.Checked)
                 return;
 
-            SettingsManager.AutoUpdateSelectedMap = AutoUpdateCheckbox.Checked;
+            SettingsManager.AutoUpdateSelectedMap = AutoUpdateMapCheckbox.Checked;
+        }
+        private void AutoUpdateModCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SettingsManager.AutoUpdateMod == AutoUpdateModCheckbox.Checked)
+                return;
+            SettingsManager.AutoUpdateMod = AutoUpdateModCheckbox.Checked;
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
@@ -673,6 +717,5 @@ namespace TaikoMapSVViewer
             }
         }
         #endregion
-
     }
 }

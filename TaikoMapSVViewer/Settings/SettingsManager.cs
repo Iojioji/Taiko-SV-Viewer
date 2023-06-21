@@ -6,6 +6,7 @@ namespace TaikoMapSVViewer.Settings
     {
         static string _version = "";
         static bool _autoUpdateSelectedMap = false;
+        static bool _autoUpdateMod = false;
         static string _songsFolder = "";
 
         public static string Version { get => _version; set => _version = value; }
@@ -16,6 +17,16 @@ namespace TaikoMapSVViewer.Settings
             {
                 _autoUpdateSelectedMap = value;
                 Properties.Settings.Default.AutoUpdateSelectedBeatmap = _autoUpdateSelectedMap;
+                Properties.Settings.Default.Save();
+            }
+        }
+        public static bool AutoUpdateMod
+        {
+            get => _autoUpdateMod;
+            set
+            {
+                _autoUpdateMod = value;
+                Properties.Settings.Default.AutoUpdateMod = _autoUpdateMod;
                 Properties.Settings.Default.Save();
             }
         }

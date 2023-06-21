@@ -43,7 +43,8 @@ namespace TaikoMapSVViewer
             this.OsuRunningLabel = new System.Windows.Forms.Label();
             this.BeatmapUpdateLabel = new System.Windows.Forms.Label();
             this.InMapSelect = new System.Windows.Forms.Label();
-            this.AutoUpdateCheckbox = new System.Windows.Forms.CheckBox();
+            this.AutoUpdateMapCheckbox = new System.Windows.Forms.CheckBox();
+            this.AutoUpdateModCheckbox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).BeginInit();
             this.SuspendLayout();
@@ -126,7 +127,7 @@ namespace TaikoMapSVViewer
             // OsuRunningLabel
             // 
             this.OsuRunningLabel.Enabled = false;
-            this.OsuRunningLabel.Location = new System.Drawing.Point(289, 24);
+            this.OsuRunningLabel.Location = new System.Drawing.Point(175, 41);
             this.OsuRunningLabel.Name = "OsuRunningLabel";
             this.OsuRunningLabel.Size = new System.Drawing.Size(115, 13);
             this.OsuRunningLabel.TabIndex = 2;
@@ -146,30 +147,42 @@ namespace TaikoMapSVViewer
             // InMapSelect
             // 
             this.InMapSelect.Enabled = false;
-            this.InMapSelect.Location = new System.Drawing.Point(410, 24);
+            this.InMapSelect.Location = new System.Drawing.Point(296, 41);
             this.InMapSelect.Name = "InMapSelect";
             this.InMapSelect.Size = new System.Drawing.Size(115, 13);
             this.InMapSelect.TabIndex = 4;
             this.InMapSelect.Text = "SelectingMap: False";
             this.InMapSelect.Visible = false;
             // 
-            // AutoUpdateCheckbox
+            // AutoUpdateMapCheckbox
             // 
-            this.AutoUpdateCheckbox.AutoSize = true;
-            this.AutoUpdateCheckbox.Location = new System.Drawing.Point(15, 24);
-            this.AutoUpdateCheckbox.Name = "AutoUpdateCheckbox";
-            this.AutoUpdateCheckbox.Size = new System.Drawing.Size(155, 17);
-            this.AutoUpdateCheckbox.TabIndex = 5;
-            this.AutoUpdateCheckbox.Text = "Auto Update Selected Map";
-            this.AutoUpdateCheckbox.UseVisualStyleBackColor = true;
-            this.AutoUpdateCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateCheckbox_CheckedChanged);
+            this.AutoUpdateMapCheckbox.AutoSize = true;
+            this.AutoUpdateMapCheckbox.Location = new System.Drawing.Point(15, 24);
+            this.AutoUpdateMapCheckbox.Name = "AutoUpdateMapCheckbox";
+            this.AutoUpdateMapCheckbox.Size = new System.Drawing.Size(155, 17);
+            this.AutoUpdateMapCheckbox.TabIndex = 5;
+            this.AutoUpdateMapCheckbox.Text = "Auto Update Selected Map";
+            this.AutoUpdateMapCheckbox.UseVisualStyleBackColor = true;
+            this.AutoUpdateMapCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateCheckbox_CheckedChanged);
+            // 
+            // AutoUpdateModCheckbox
+            // 
+            this.AutoUpdateModCheckbox.AutoSize = true;
+            this.AutoUpdateModCheckbox.Location = new System.Drawing.Point(176, 24);
+            this.AutoUpdateModCheckbox.Name = "AutoUpdateModCheckbox";
+            this.AutoUpdateModCheckbox.Size = new System.Drawing.Size(110, 17);
+            this.AutoUpdateModCheckbox.TabIndex = 5;
+            this.AutoUpdateModCheckbox.Text = "Auto Update Mod";
+            this.AutoUpdateModCheckbox.UseVisualStyleBackColor = true;
+            this.AutoUpdateModCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateModCheckbox_CheckedChanged);
             // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(875, 506);
-            this.Controls.Add(this.AutoUpdateCheckbox);
+            this.Controls.Add(this.AutoUpdateModCheckbox);
+            this.Controls.Add(this.AutoUpdateMapCheckbox);
             this.Controls.Add(this.InMapSelect);
             this.Controls.Add(this.BeatmapUpdateLabel);
             this.Controls.Add(this.OsuRunningLabel);
@@ -206,7 +219,8 @@ namespace TaikoMapSVViewer
         private System.Windows.Forms.Label OsuRunningLabel;
         private System.Windows.Forms.Label BeatmapUpdateLabel;
         private System.Windows.Forms.Label InMapSelect;
-        private System.Windows.Forms.CheckBox AutoUpdateCheckbox;
+        private System.Windows.Forms.CheckBox AutoUpdateMapCheckbox;
+        private System.Windows.Forms.CheckBox AutoUpdateModCheckbox;
     }
 }
 
