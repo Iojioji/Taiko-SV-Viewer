@@ -101,6 +101,7 @@
     <Compile Include="Forms\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="UpdateStuff\UpdateManager.cs" />
     <EmbeddedResource Include="Forms\MainForm.resx">

@@ -58,5 +58,29 @@ namespace TaikoMapSVViewer.Properties {
                 this["AutoUpdateMod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkGreen")]
+        public global::System.Drawing.Color GraphLineColor {
+            get {
+                return ((global::System.Drawing.Color)(this["GraphLineColor"]));
+            }
+            set {
+                this["GraphLineColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("255, 106, 0")]
+        public global::System.Drawing.Color GraphLineColorKiai {
+            get {
+                return ((global::System.Drawing.Color)(this["GraphLineColorKiai"]));
+            }
+            set {
+                this["GraphLineColorKiai"] = value;
+            }
+        }
     }
 }

@@ -124,7 +124,8 @@ namespace TaikoMapSVViewer
 
                 int lastObject = chartSections.Last().GetLastMilli();
 
-                DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), currentMod);
+                //DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), currentMod);
+                DrawChart(SettingsManager.Colors.GraphLineColor, SettingsManager.Colors.GraphLineColorKiai, currentMod);
 
 
                 //If EZ is checked
@@ -232,10 +233,6 @@ namespace TaikoMapSVViewer
         {
             for (int i = 0; i < chartSections.Count; i++)
             {
-                if (i == 26)
-                {
-                    Console.WriteLine("Ay wey");
-                }
                 ChartSection section = chartSections[i];
 
                 var series = new Series($"SVs-{seriesName}{i}");
@@ -360,7 +357,7 @@ namespace TaikoMapSVViewer
 
             toolStripRefresh.Enabled = true;
         }
-        void RefreshBeatmap()
+        public void RefreshBeatmap()
         {
             if (string.IsNullOrEmpty(currentLoadedBeatmap))
             {
@@ -561,6 +558,13 @@ namespace TaikoMapSVViewer
         private void toolStripRefresh_Click(object sender, EventArgs e)
         {
             RefreshBeatmap();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.Init(this);
+            settingsForm.ShowDialog();
         }
         //private void SVChart_MouseWheel(object sender, MouseEventArgs e)
         //{

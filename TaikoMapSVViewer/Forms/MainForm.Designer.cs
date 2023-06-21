@@ -30,7 +30,7 @@ namespace TaikoMapSVViewer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,10 +87,10 @@ namespace TaikoMapSVViewer
             // 
             // settingsToolStripMenuItem
             // 
-            this.settingsToolStripMenuItem.Enabled = false;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // updateStripButt
             // 
@@ -104,11 +104,11 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea3.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea3);
-            this.SVChart.Location = new System.Drawing.Point(12, 57);
+            chartArea1.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea1);
+            this.SVChart.Location = new System.Drawing.Point(12, 41);
             this.SVChart.Name = "SVChart";
-            this.SVChart.Size = new System.Drawing.Size(851, 437);
+            this.SVChart.Size = new System.Drawing.Size(851, 453);
             this.SVChart.TabIndex = 1;
             this.SVChart.Text = "chart1";
             this.SVChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.SVChartSelectionRangeChanged);
@@ -127,7 +127,7 @@ namespace TaikoMapSVViewer
             // OsuRunningLabel
             // 
             this.OsuRunningLabel.Enabled = false;
-            this.OsuRunningLabel.Location = new System.Drawing.Point(175, 41);
+            this.OsuRunningLabel.Location = new System.Drawing.Point(292, 25);
             this.OsuRunningLabel.Name = "OsuRunningLabel";
             this.OsuRunningLabel.Size = new System.Drawing.Size(115, 13);
             this.OsuRunningLabel.TabIndex = 2;
@@ -137,9 +137,9 @@ namespace TaikoMapSVViewer
             // BeatmapUpdateLabel
             // 
             this.BeatmapUpdateLabel.Enabled = false;
-            this.BeatmapUpdateLabel.Location = new System.Drawing.Point(12, 41);
+            this.BeatmapUpdateLabel.Location = new System.Drawing.Point(534, 25);
             this.BeatmapUpdateLabel.Name = "BeatmapUpdateLabel";
-            this.BeatmapUpdateLabel.Size = new System.Drawing.Size(851, 13);
+            this.BeatmapUpdateLabel.Size = new System.Drawing.Size(257, 13);
             this.BeatmapUpdateLabel.TabIndex = 3;
             this.BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
             this.BeatmapUpdateLabel.Visible = false;
@@ -147,7 +147,7 @@ namespace TaikoMapSVViewer
             // InMapSelect
             // 
             this.InMapSelect.Enabled = false;
-            this.InMapSelect.Location = new System.Drawing.Point(296, 41);
+            this.InMapSelect.Location = new System.Drawing.Point(413, 25);
             this.InMapSelect.Name = "InMapSelect";
             this.InMapSelect.Size = new System.Drawing.Size(115, 13);
             this.InMapSelect.TabIndex = 4;
