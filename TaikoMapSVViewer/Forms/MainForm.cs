@@ -84,7 +84,22 @@ namespace TaikoMapSVViewer
 
             reader = new MemoryReaderManager();
 
-            osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
+            osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
+            //int test = -100;
+            //OsuMemoryReader.Instance.GetCurrentStatus(out test);
+
+            //OsuMemoryStatus aaaa = (OsuMemoryStatus)test;
+
+            //Debug.WriteLine($"Status: {aaaa} ({test})");
+
+            //if (test == -1)
+            //{
+            //    osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
+            //    OsuMemoryReader.Instance.GetCurrentStatus(out test);
+            //}
+
+            //osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
+
             //osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
 
             OsuRunningTimer.Start();
@@ -484,6 +499,7 @@ namespace TaikoMapSVViewer
                         try
                         {
                             osuExePath = process.MainModule.FileName;
+                            break;
                         }
                         catch (Exception ex)
                         {
@@ -493,6 +509,7 @@ namespace TaikoMapSVViewer
 
                     if (string.IsNullOrWhiteSpace(osuExePath))
                     {
+                        Debug.WriteLine("Yo wtf osuExePath was empty or whitespace");
                         gameLoaded = false;
                         return;
                     }
