@@ -27,7 +27,10 @@ namespace TaikoMapSVViewer
 
         string userSongsFolder = null;
 
+        MemoryReaderManager reader;
+
         IOsuMemoryReader osuReader;
+        //StructuredOsuMemoryReader osuReader;
 
         bool hooked = false;
         bool? gameLoaded = false;
@@ -70,7 +73,7 @@ namespace TaikoMapSVViewer
             //string assemblyVersion = fvi.FileVersion;
             SettingsManager.Init();
 
-            controlColor = BeatmapUpdateLabel.BackColor;
+            //controlColor = BeatmapUpdateLabel.BackColor;
 
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -79,7 +82,10 @@ namespace TaikoMapSVViewer
             AutoUpdateMapCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
             AutoUpdateModCheckbox.Checked = SettingsManager.AutoUpdateMod;
 
+            reader = new MemoryReaderManager();
+
             osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
+            //osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
 
             OsuRunningTimer.Start();
             BeatmapUpdateTimer.Start();
@@ -160,7 +166,7 @@ namespace TaikoMapSVViewer
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it)\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it [{currentLoadedBeatmap}])\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 currentLoadedBeatmap = "";
             }
             UpdateRefreshButton();
@@ -405,12 +411,14 @@ namespace TaikoMapSVViewer
             }
             if (gameLoaded == false || gameLoaded == null || !inMapSelectScreen)
             {
-                BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
-                BeatmapUpdateLabel.BackColor = controlColor;
+                //BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
+                //BeatmapUpdateLabel.BackColor = controlColor;
 
                 return;
             }
 
+            //string beatmapFilename = osuReader.GetOsuFileName();
+            //string beatmapFolder = osuReader.GetMapFolderName();
             string beatmapFilename = osuReader.GetOsuFileName();
             string beatmapFolder = osuReader.GetMapFolderName();
 
@@ -443,9 +451,9 @@ namespace TaikoMapSVViewer
                 return;
             }
 
-            //BeatmapUpdateLabel.Text = $"{beatmapFolder} - {beatmapFilename}";
-            BeatmapUpdateLabel.Text = $"{absoluteFilename}";
-            BeatmapUpdateLabel.BackColor = Color.LightGreen;
+            ////BeatmapUpdateLabel.Text = $"{beatmapFolder} - {beatmapFilename}";
+            //BeatmapUpdateLabel.Text = $"{absoluteFilename}";
+            //BeatmapUpdateLabel.BackColor = Color.LightGreen;
 
             ParseBeatmap(absoluteFilename);
         }
@@ -459,7 +467,7 @@ namespace TaikoMapSVViewer
             {
                 if (gameLoaded == false)
                 {
-                    await Task.Run(() => Thread.Sleep(5000));
+                    await Task.Run(() => Thread.Sleep(1000));
                     gameLoaded = true;
                 }
                 else if (gameLoaded == null)
@@ -469,7 +477,26 @@ namespace TaikoMapSVViewer
 
                 if (userSongsFolder == null || userSongsFolder == "")
                 {
-                    var osuExePath = processes[0].MainModule.FileName;
+                    string osuExePath = "";  
+                    
+                    foreach (Process process in processes)
+                    {
+                        try
+                        {
+                            osuExePath = process.MainModule.FileName;
+                        }
+                        catch (Exception ex)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(osuExePath))
+                    {
+                        gameLoaded = false;
+                        return;
+                    }
+                    
                     userSongsFolder = Path.Combine(Path.GetDirectoryName(osuExePath), "Songs");
                     SettingsManager.SongsFolder = userSongsFolder;
                 }
@@ -519,11 +546,11 @@ namespace TaikoMapSVViewer
             else
                 inMapSelectScreen = false;
 
-            OsuRunningLabel.Text = gameLoaded == true ? "OsuRunning: True" : "OsuRunning: False";
-            OsuRunningLabel.BackColor = gameLoaded == true ? Color.LightGreen : Color.Red;
+            //OsuRunningLabel.Text = gameLoaded == true ? "OsuRunning: True" : "OsuRunning: False";
+            //OsuRunningLabel.BackColor = gameLoaded == true ? Color.LightGreen : Color.Red;
 
-            InMapSelect.Text = inMapSelectScreen ? "SelectingMap: True" : "SelectingMap: False";
-            InMapSelect.BackColor = inMapSelectScreen ? Color.LightGreen : Color.Red;
+            //InMapSelect.Text = inMapSelectScreen ? "SelectingMap: True" : "SelectingMap: False";
+            //InMapSelect.BackColor = inMapSelectScreen ? Color.LightGreen : Color.Red;
         }
 
 

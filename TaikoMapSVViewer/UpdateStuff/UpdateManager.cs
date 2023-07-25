@@ -15,6 +15,7 @@ namespace TaikoMapSVViewer
         {
             try
             {
+
                 XmlTextReader reader = new XmlTextReader("https://raw.githubusercontent.com/Iojioji/Taiko-SV-Viewer/main/AutoUpdater.xml");
                 bool nextIsVersion = false;
                 string version = "";

@@ -30,7 +30,7 @@ namespace TaikoMapSVViewer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,6 +45,8 @@ namespace TaikoMapSVViewer
             this.InMapSelect = new System.Windows.Forms.Label();
             this.AutoUpdateMapCheckbox = new System.Windows.Forms.CheckBox();
             this.AutoUpdateModCheckbox = new System.Windows.Forms.CheckBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.modLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).BeginInit();
             this.SuspendLayout();
@@ -87,6 +89,7 @@ namespace TaikoMapSVViewer
             // 
             // settingsToolStripMenuItem
             // 
+            this.settingsToolStripMenuItem.Enabled = false;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.settingsToolStripMenuItem.Text = "Settings";
@@ -104,8 +107,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea2);
             this.SVChart.Location = new System.Drawing.Point(12, 41);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 453);
@@ -127,7 +130,7 @@ namespace TaikoMapSVViewer
             // OsuRunningLabel
             // 
             this.OsuRunningLabel.Enabled = false;
-            this.OsuRunningLabel.Location = new System.Drawing.Point(292, 25);
+            this.OsuRunningLabel.Location = new System.Drawing.Point(362, 25);
             this.OsuRunningLabel.Name = "OsuRunningLabel";
             this.OsuRunningLabel.Size = new System.Drawing.Size(115, 13);
             this.OsuRunningLabel.TabIndex = 2;
@@ -137,7 +140,7 @@ namespace TaikoMapSVViewer
             // BeatmapUpdateLabel
             // 
             this.BeatmapUpdateLabel.Enabled = false;
-            this.BeatmapUpdateLabel.Location = new System.Drawing.Point(534, 25);
+            this.BeatmapUpdateLabel.Location = new System.Drawing.Point(604, 25);
             this.BeatmapUpdateLabel.Name = "BeatmapUpdateLabel";
             this.BeatmapUpdateLabel.Size = new System.Drawing.Size(257, 13);
             this.BeatmapUpdateLabel.TabIndex = 3;
@@ -147,7 +150,7 @@ namespace TaikoMapSVViewer
             // InMapSelect
             // 
             this.InMapSelect.Enabled = false;
-            this.InMapSelect.Location = new System.Drawing.Point(413, 25);
+            this.InMapSelect.Location = new System.Drawing.Point(483, 25);
             this.InMapSelect.Name = "InMapSelect";
             this.InMapSelect.Size = new System.Drawing.Size(115, 13);
             this.InMapSelect.TabIndex = 4;
@@ -168,7 +171,7 @@ namespace TaikoMapSVViewer
             // AutoUpdateModCheckbox
             // 
             this.AutoUpdateModCheckbox.AutoSize = true;
-            this.AutoUpdateModCheckbox.Location = new System.Drawing.Point(176, 24);
+            this.AutoUpdateModCheckbox.Location = new System.Drawing.Point(327, 5);
             this.AutoUpdateModCheckbox.Name = "AutoUpdateModCheckbox";
             this.AutoUpdateModCheckbox.Size = new System.Drawing.Size(110, 17);
             this.AutoUpdateModCheckbox.TabIndex = 5;
@@ -176,11 +179,37 @@ namespace TaikoMapSVViewer
             this.AutoUpdateModCheckbox.UseVisualStyleBackColor = true;
             this.AutoUpdateModCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateModCheckbox_CheckedChanged);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "NM",
+            "HR",
+            "EZ",
+            "AutoUpdate"});
+            this.comboBox1.Location = new System.Drawing.Point(224, 21);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(74, 20);
+            this.comboBox1.TabIndex = 6;
+            // 
+            // modLbl
+            // 
+            this.modLbl.AutoSize = true;
+            this.modLbl.Location = new System.Drawing.Point(190, 24);
+            this.modLbl.Name = "modLbl";
+            this.modLbl.Size = new System.Drawing.Size(28, 13);
+            this.modLbl.TabIndex = 7;
+            this.modLbl.Text = "Mod";
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(875, 506);
+            this.Controls.Add(this.modLbl);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.AutoUpdateModCheckbox);
             this.Controls.Add(this.AutoUpdateMapCheckbox);
             this.Controls.Add(this.InMapSelect);
@@ -221,6 +250,8 @@ namespace TaikoMapSVViewer
         private System.Windows.Forms.Label InMapSelect;
         private System.Windows.Forms.CheckBox AutoUpdateMapCheckbox;
         private System.Windows.Forms.CheckBox AutoUpdateModCheckbox;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label modLbl;
     }
 }
 
