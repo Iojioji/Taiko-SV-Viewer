@@ -30,7 +30,7 @@ namespace TaikoMapSVViewer
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,8 +107,8 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea1);
             this.SVChart.Location = new System.Drawing.Point(12, 41);
             this.SVChart.Name = "SVChart";
             this.SVChart.Size = new System.Drawing.Size(851, 453);
@@ -129,7 +129,6 @@ namespace TaikoMapSVViewer
             // 
             // OsuRunningLabel
             // 
-            this.OsuRunningLabel.Enabled = false;
             this.OsuRunningLabel.Location = new System.Drawing.Point(362, 25);
             this.OsuRunningLabel.Name = "OsuRunningLabel";
             this.OsuRunningLabel.Size = new System.Drawing.Size(115, 13);
@@ -139,7 +138,6 @@ namespace TaikoMapSVViewer
             // 
             // BeatmapUpdateLabel
             // 
-            this.BeatmapUpdateLabel.Enabled = false;
             this.BeatmapUpdateLabel.Location = new System.Drawing.Point(604, 25);
             this.BeatmapUpdateLabel.Name = "BeatmapUpdateLabel";
             this.BeatmapUpdateLabel.Size = new System.Drawing.Size(257, 13);
@@ -149,7 +147,6 @@ namespace TaikoMapSVViewer
             // 
             // InMapSelect
             // 
-            this.InMapSelect.Enabled = false;
             this.InMapSelect.Location = new System.Drawing.Point(483, 25);
             this.InMapSelect.Name = "InMapSelect";
             this.InMapSelect.Size = new System.Drawing.Size(115, 13);
