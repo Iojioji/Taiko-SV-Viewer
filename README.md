@@ -9,8 +9,9 @@ You can check out other mode's maps. I haven't really tested those but it should
     - [ ] Change graph colors
     - [ ] Change marker style (color, size, show/hide)
 - [ ] Open multiple diffs
-- [ ] Make barline gimmicks not show (unless they're affecting a hitobject)
 - [ ] Tweak exact SV+time when you hover a point on the graph; it's a bit picky sometimes
+- [x] Let different SV modifying mods affect the graph
+- [x] Make barline gimmicks not show (unless they're affecting a hitobject)
 - [x] Change marker size depending on zoom level
 - [x] Add drag-and-drop to open diffs
 - [x] Add auto-update thing
@@ -19,7 +20,8 @@ You can check out other mode's maps. I haven't really tested those but it should
 
 ## What it already does
 - Open Beatmap Diffs
-  - Either through File > Load or by dragging a .osu file into it
+  - Either through File > Load, by dragging a .osu file into it or by having osu! open (lazer makes some funny things happen)
+- Show graph being affected by HR or EZ, these can be set manually or read automatically if osu! is open
 - Refresh an already open map to check out those new cool SV changes you've made (you can also press F5)
 - Rough zoom in by selecting the are you want to zoom into (you can un-zoom by clicking the "(-)" symbol on the upper-left corner for Y axis or the lower-left corner for the X axis)
 - Exact SV + time of an object if you hover your mouse over a point on the line
