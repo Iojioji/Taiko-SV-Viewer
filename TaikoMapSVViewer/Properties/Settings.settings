@@ -8,14 +8,14 @@
     <Setting Name="AutoUpdateSelectedBeatmap" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoUpdateMod" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="GraphLineColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">DarkGreen</Value>
     </Setting>
     <Setting Name="GraphLineColorKiai" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">255, 106, 0</Value>
+    </Setting>
+    <Setting Name="SVModSetting" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -18,19 +18,20 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.ComponentModel;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace TaikoMapSVViewer
 {
+    public enum SVMod { AutoUpdate = 0, NM = 1, HD = 2, HR = 3 }
     public partial class MainForm : Form
     {
         Beatmap currentBeatmap;
 
         string userSongsFolder = null;
 
-        MemoryReaderManager reader;
-
-        IOsuMemoryReader osuReader;
-        //StructuredOsuMemoryReader osuReader;
+        MemoryReaderManager osuReader;
 
         bool hooked = false;
         bool? gameLoaded = false;
@@ -42,14 +43,15 @@ namespace TaikoMapSVViewer
 
         Color controlColor;
 
-        string previousLoadedBeatmap = "";
         string currentLoadedBeatmap = "";
 
         string currentMod = "NM";
-        string previousMod = "NM";
 
         //int numberOfZoom = 0;
         int maxMarkerSize = 30;
+
+        bool saveToSettings = false;
+
         bool HasBeatmap
         {
             get { return currentBeatmap != null; }
@@ -63,6 +65,8 @@ namespace TaikoMapSVViewer
             //Location.Offset(-this.Width * 3, -this.Height * 3);
             InitializeComponent();
             Initialize();
+
+            Closing += OnClose;
             //SVChart.MouseWheel += SVChart_MouseWheel;
         }
 
@@ -79,37 +83,32 @@ namespace TaikoMapSVViewer
 
             SettingsManager.Version = ver.ToString();
 
-            AutoUpdateMapCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
-            AutoUpdateModCheckbox.Checked = SettingsManager.AutoUpdateMod;
+            LoadSettingsValues();
 
-            reader = new MemoryReaderManager();
+            saveToSettings = true;
 
-            osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
-            //int test = -100;
-            //OsuMemoryReader.Instance.GetCurrentStatus(out test);
+            osuReader = new MemoryReaderManager(this, OnPathChanged, OnModChanged, OnAudioTimeChanged);
+            osuReader.OnReadError += OnReadError;
 
-            //OsuMemoryStatus aaaa = (OsuMemoryStatus)test;
-
-            //Debug.WriteLine($"Status: {aaaa} ({test})");
-
-            //if (test == -1)
-            //{
-            //    osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
-            //    OsuMemoryReader.Instance.GetCurrentStatus(out test);
-            //}
-
-            //osuReader = OsuMemoryReader.Instance.GetInstanceForWindowTitleHint("osu!");
-
-            //osuReader = StructuredOsuMemoryReader.Instance.GetInstanceForWindowTitleHint("");
-
-            OsuRunningTimer.Start();
-            BeatmapUpdateTimer.Start();
+            osuReader.StartReading();
 
             this.AllowDrop = true;
         }
+
+        private void OnClose(object sender, CancelEventArgs e)
+        {
+            osuReader.StopReading();
+        }
+
         public void Reset()
         {
 
+        }
+
+        void LoadSettingsValues()
+        {
+            AutoUpdateMapCheckbox.Checked = SettingsManager.AutoUpdateSelectedMap;
+            SVModDropList.SelectedIndex = SettingsManager.SVMod;
         }
 
         void ParseBeatmap(string beatmapPath)
@@ -181,7 +180,7 @@ namespace TaikoMapSVViewer
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it [{currentLoadedBeatmap}])\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Please send this to Iojioji (along with the exact map that caused it [{beatmapPath}])\r\n\r\n- - - - - - - - - - - - - -\r\n\r\n{ex.Message}", $"An unexpected error has occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 currentLoadedBeatmap = "";
             }
             UpdateRefreshButton();
@@ -292,7 +291,7 @@ namespace TaikoMapSVViewer
             SVChart.ChartAreas[0].AxisX.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
             SVChart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
             SVChart.ChartAreas[0].AxisY.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
-
+                
             SVChart.ChartAreas[0].AxisX.Name = "Seconds";
             SVChart.ChartAreas[0].AxisY.Name = "BPM SV";
 
@@ -397,6 +396,60 @@ namespace TaikoMapSVViewer
             ParseBeatmap(currentLoadedBeatmap);
         }
 
+        public void SetSongsFolder()
+        {
+            var processes = Process.GetProcessesByName("osu!");
+
+            if (processes.Length == 0)
+            {
+                Debug.WriteLine($"No osu process was found unu");
+            }
+            else
+            {
+                //if (processes.Length == 2)
+                //{
+
+                //}
+                //else if (processes)
+                if (processes[0].MainModule.FileVersionInfo.ProductName.Contains("lazer"))
+                {
+                    string message = processes.Length > 1 ? $"You probably had osu!lazer and osu!opened at the same time, please close lazer and reopen it for the thing to work \r\n\r\n(just opening the osu!, then opening sv viewer, then opening osu!lazer should do the trick next time)\r\n\r\n\r\nPS: I know this is very annoying but I don't think I'll be fixing this because my brain is too smoll" : $"Hey that's osu!lazer and not osu!\r\nThis won't work with that for the forseeable future unu";
+                    MessageBox.Show(message, $"Oh we did an oopsie!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (userSongsFolder == null || userSongsFolder == "")
+                {
+                    string osuExePath = "";
+
+                    osuExePath = processes[0].MainModule.FileName;
+
+                    //foreach (Process process in processes)
+                    //{
+                    //    if (process)
+                    //    //try
+                    //    //{
+                    //    //    osuExePath = process.MainModule.FileName;
+                    //    //    //break;
+                    //    //}
+                    //    //catch (Exception ex)
+                    //    //{
+                    //    //    continue;
+                    //    //}
+                    //}
+
+                    if (string.IsNullOrWhiteSpace(osuExePath))
+                    {
+                        Debug.WriteLine("Yo wtf osuExePath was empty or whitespace");
+                        gameLoaded = false;
+                        return;
+                    }
+
+                    userSongsFolder = Path.Combine(Path.GetDirectoryName(osuExePath), "Songs");
+                    SettingsManager.SongsFolder = userSongsFolder;
+                }
+            }
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.F5)
@@ -409,6 +462,73 @@ namespace TaikoMapSVViewer
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        #region MemoryStuff
+        public void OnPathChanged(string newBeatmap, string newFolder)
+        {
+            Debug.WriteLine($"File name changed! ({newBeatmap}, {newFolder})");
+            if (!SettingsManager.AutoUpdateSelectedMap) return;
+
+            var invalidChars = Path.GetInvalidPathChars();
+
+            if (string.IsNullOrWhiteSpace(newBeatmap) || newBeatmap.Any(c => invalidChars.Contains(c)))
+            {
+                Debug.WriteLine($"Error: beatmap had invalid characters");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(newFolder) || newFolder.Any(c => invalidChars.Contains(c)))
+            {
+                Debug.WriteLine($"Error: folder had invalid characters");
+                return;
+            }
+
+            //if (previousLoadedBeatmap != null && previousLoadedBeatmap == newFileName) return;
+
+            if (userSongsFolder == null)
+            {
+                SetSongsFolder();
+                if (userSongsFolder == null)
+                {
+                    Debug.WriteLine($"Oh shit there are no user songs folders, lemme know where they at pls.");
+                    return;
+                }
+            }
+
+            string absoluteFileName = Path.Combine(userSongsFolder, newFolder.TrimEnd(), newBeatmap);
+            if (!File.Exists(absoluteFileName))
+            {
+                Debug.WriteLine($"AbsoluteFile doesn't exist! ({absoluteFileName})");
+            }
+
+            if (InvokeRequired)
+            {
+                this.Invoke( new Action(() => ParseBeatmap(absoluteFileName)));
+                return;
+            }
+            ParseBeatmap(absoluteFileName);
+        }
+        private void OnModChanged(ReaderMods newValue)
+        {
+            Debug.WriteLine($"Mod changed! ({newValue})");
+            currentMod = newValue.ToString();
+
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action(() => RefreshBeatmap()));
+                return;
+            }
+            RefreshBeatmap();
+        }
+        private void OnAudioTimeChanged(int newValue)
+        {
+            Debug.WriteLine($"Time changed! ({newValue})");
+        }
+
+        public void OnReadError(string error)
+        {
+            Debug.WriteLine(error);
+        }
+        #endregion
+
         #region events
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -418,162 +538,8 @@ namespace TaikoMapSVViewer
             }
         }
 
-        private void BeatmapUpdateTimer_Tick(object sender, EventArgs e)
-        {
-            if (!SettingsManager.AutoUpdateSelectedMap)
-            {
-                return;
-            }
-            if (gameLoaded == false || gameLoaded == null || !inMapSelectScreen)
-            {
-                //BeatmapUpdateLabel.Text = "BeatmapUpdate: False";
-                //BeatmapUpdateLabel.BackColor = controlColor;
-
-                return;
-            }
-
-            //string beatmapFilename = osuReader.GetOsuFileName();
-            //string beatmapFolder = osuReader.GetMapFolderName();
-            string beatmapFilename = osuReader.GetOsuFileName();
-            string beatmapFolder = osuReader.GetMapFolderName();
-
-            var invalidChars = Path.GetInvalidPathChars();
-
-            if (string.IsNullOrWhiteSpace(beatmapFilename) || beatmapFilename.Any(c => invalidChars.Contains(c)))
-            {
-                Console.WriteLine($"Error: beatmap had invalid characters");
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(beatmapFolder) || beatmapFolder.Any(c => invalidChars.Contains(c)))
-            {
-                Console.WriteLine($"Error: folder had invalid characters");
-                return;
-            }
-
-            //If previousLoadedBeatmap isnt null and the previousLoadedBeatmap is the same as the one running rn
-            //If it has a different mod tho, load it up.
-
-            if (previousLoadedBeatmap != null && (previousLoadedBeatmap == beatmapFilename && (previousMod == currentMod)))
-                return;
-
-            previousLoadedBeatmap = beatmapFilename;
-            previousMod = currentMod;
-
-            string absoluteFilename = Path.Combine(userSongsFolder, beatmapFolder.TrimEnd(), beatmapFilename);
-            if (!File.Exists(absoluteFilename))
-            {
-                Console.WriteLine($"AbsoluteFile doesn't exist! ({absoluteFilename})");
-                return;
-            }
-
-            ////BeatmapUpdateLabel.Text = $"{beatmapFolder} - {beatmapFilename}";
-            //BeatmapUpdateLabel.Text = $"{absoluteFilename}";
-            //BeatmapUpdateLabel.BackColor = Color.LightGreen;
-
-            ParseBeatmap(absoluteFilename);
-        }
-        private async void OsuRunningTimer_Tick(object sender, EventArgs e)
-        {
-            var processes = Process.GetProcessesByName("osu!");
-
-            if (processes.Length == 0)
-                gameLoaded = false;
-            else
-            {
-                if (gameLoaded == false)
-                {
-                    await Task.Run(() => Thread.Sleep(1000));
-                    gameLoaded = true;
-                }
-                else if (gameLoaded == null)
-                {
-                    gameLoaded = true;
-                }
-
-                if (userSongsFolder == null || userSongsFolder == "")
-                {
-                    string osuExePath = "";  
-                    
-                    foreach (Process process in processes)
-                    {
-                        try
-                        {
-                            osuExePath = process.MainModule.FileName;
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (string.IsNullOrWhiteSpace(osuExePath))
-                    {
-                        Debug.WriteLine("Yo wtf osuExePath was empty or whitespace");
-                        gameLoaded = false;
-                        return;
-                    }
-                    
-                    userSongsFolder = Path.Combine(Path.GetDirectoryName(osuExePath), "Songs");
-                    SettingsManager.SongsFolder = userSongsFolder;
-                }
-            }
-
-            int intStatus = 0;
-            osuReader.GetCurrentStatus(out intStatus);
-
-            //TODO: Make this update the thing yes yes.
-            //Just check if you're using HR or EZ when mods change.
-            //If they changed, set the var to NM, HR or EZ and update the graph pls.
-
-            //var a = new Mods();
-            //a.ModsXor1 = osuReader.GetMods();
-            //a.ModsXor2 = osuReader.GetMods();
-
-            if (SettingsManager.AutoUpdateMod)
-            {
-                ReaderMods a = (ReaderMods)osuReader.GetMods();
-                string aa = a.ToString();
-
-                //Console.WriteLine($"a: {a} ({aa}) Mods: {Convert.ToInt32(osuReader.GetMods())}, PlayingMods: {osuReader.GetPlayingMods()}");
-
-                if (aa.Contains("HR"))
-                {
-                    currentMod = "HR";
-                }
-                else if (aa.Contains("EZ"))
-                {
-                    currentMod = "EZ";
-                }
-                else
-                {
-                    currentMod = "NM";
-                }
-            }
-            else
-            {
-                currentMod = "NM";
-            }
-
-
-            OsuMemoryStatus status = (OsuMemoryStatus)intStatus;
-
-            if (status == OsuMemoryStatus.SongSelect || status == OsuMemoryStatus.SongSelectEdit || status == OsuMemoryStatus.MultiplayerRoom || status == OsuMemoryStatus.MultiplayerSongSelect)
-                inMapSelectScreen = true;
-            else
-                inMapSelectScreen = false;
-
-            //OsuRunningLabel.Text = gameLoaded == true ? "OsuRunning: True" : "OsuRunning: False";
-            //OsuRunningLabel.BackColor = gameLoaded == true ? Color.LightGreen : Color.Red;
-
-            //InMapSelect.Text = inMapSelectScreen ? "SelectingMap: True" : "SelectingMap: False";
-            //InMapSelect.BackColor = inMapSelectScreen ? Color.LightGreen : Color.Red;
-        }
-
-
         private void LoadBeatmap_Click(object sender, EventArgs e)
         {
-
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "osu beatmap files (*.osu)|*.osu";
@@ -592,11 +558,11 @@ namespace TaikoMapSVViewer
 
             SettingsManager.AutoUpdateSelectedMap = AutoUpdateMapCheckbox.Checked;
         }
-        private void AutoUpdateModCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void SVModDropList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (SettingsManager.AutoUpdateMod == AutoUpdateModCheckbox.Checked)
+            if (SettingsManager.SVMod == SVModDropList.SelectedIndex)
                 return;
-            SettingsManager.AutoUpdateMod = AutoUpdateModCheckbox.Checked;
+            SettingsManager.SVMod = SVModDropList.SelectedIndex;
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
@@ -765,5 +731,6 @@ namespace TaikoMapSVViewer
             }
         }
         #endregion
+
     }
 }

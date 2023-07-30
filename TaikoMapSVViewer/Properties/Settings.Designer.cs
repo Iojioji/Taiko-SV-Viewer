@@ -49,18 +49,6 @@ namespace TaikoMapSVViewer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoUpdateMod {
-            get {
-                return ((bool)(this["AutoUpdateMod"]));
-            }
-            set {
-                this["AutoUpdateMod"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("DarkGreen")]
         public global::System.Drawing.Color GraphLineColor {
             get {
@@ -80,6 +68,18 @@ namespace TaikoMapSVViewer.Properties {
             }
             set {
                 this["GraphLineColorKiai"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SVModSetting {
+            get {
+                return ((int)(this["SVModSetting"]));
+            }
+            set {
+                this["SVModSetting"] = value;
             }
         }
     }

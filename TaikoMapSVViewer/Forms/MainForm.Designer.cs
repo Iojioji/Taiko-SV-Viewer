@@ -29,8 +29,7 @@ namespace TaikoMapSVViewer
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripFile = new System.Windows.Forms.ToolStripMenuItem();
             this.loadBeatmapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,14 +37,11 @@ namespace TaikoMapSVViewer
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateStripButt = new System.Windows.Forms.ToolStripMenuItem();
             this.SVChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.BeatmapUpdateTimer = new System.Windows.Forms.Timer(this.components);
-            this.OsuRunningTimer = new System.Windows.Forms.Timer(this.components);
             this.OsuRunningLabel = new System.Windows.Forms.Label();
             this.BeatmapUpdateLabel = new System.Windows.Forms.Label();
             this.InMapSelect = new System.Windows.Forms.Label();
             this.AutoUpdateMapCheckbox = new System.Windows.Forms.CheckBox();
-            this.AutoUpdateModCheckbox = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.SVModDropList = new System.Windows.Forms.ComboBox();
             this.modLbl = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SVChart)).BeginInit();
@@ -107,25 +103,15 @@ namespace TaikoMapSVViewer
             this.SVChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.Name = "ChartArea1";
-            this.SVChart.ChartAreas.Add(chartArea1);
-            this.SVChart.Location = new System.Drawing.Point(12, 41);
+            chartArea2.Name = "ChartArea1";
+            this.SVChart.ChartAreas.Add(chartArea2);
+            this.SVChart.Location = new System.Drawing.Point(12, 44);
             this.SVChart.Name = "SVChart";
-            this.SVChart.Size = new System.Drawing.Size(851, 453);
+            this.SVChart.Size = new System.Drawing.Size(851, 450);
             this.SVChart.TabIndex = 1;
             this.SVChart.Text = "chart1";
             this.SVChart.SelectionRangeChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.SVChartSelectionRangeChanged);
             this.SVChart.AxisViewChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ViewEventArgs>(this.SVChartAxisChanged);
-            // 
-            // BeatmapUpdateTimer
-            // 
-            this.BeatmapUpdateTimer.Interval = 20;
-            this.BeatmapUpdateTimer.Tick += new System.EventHandler(this.BeatmapUpdateTimer_Tick);
-            // 
-            // OsuRunningTimer
-            // 
-            this.OsuRunningTimer.Interval = 500;
-            this.OsuRunningTimer.Tick += new System.EventHandler(this.OsuRunningTimer_Tick);
             // 
             // OsuRunningLabel
             // 
@@ -165,36 +151,26 @@ namespace TaikoMapSVViewer
             this.AutoUpdateMapCheckbox.UseVisualStyleBackColor = true;
             this.AutoUpdateMapCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateCheckbox_CheckedChanged);
             // 
-            // AutoUpdateModCheckbox
+            // SVModDropList
             // 
-            this.AutoUpdateModCheckbox.AutoSize = true;
-            this.AutoUpdateModCheckbox.Location = new System.Drawing.Point(327, 5);
-            this.AutoUpdateModCheckbox.Name = "AutoUpdateModCheckbox";
-            this.AutoUpdateModCheckbox.Size = new System.Drawing.Size(110, 17);
-            this.AutoUpdateModCheckbox.TabIndex = 5;
-            this.AutoUpdateModCheckbox.Text = "Auto Update Mod";
-            this.AutoUpdateModCheckbox.UseVisualStyleBackColor = true;
-            this.AutoUpdateModCheckbox.CheckedChanged += new System.EventHandler(this.AutoUpdateModCheckbox_CheckedChanged);
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.SVModDropList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SVModDropList.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SVModDropList.FormattingEnabled = true;
+            this.SVModDropList.Items.AddRange(new object[] {
+            "AutoUpdate",
             "NM",
             "HR",
-            "EZ",
-            "AutoUpdate"});
-            this.comboBox1.Location = new System.Drawing.Point(224, 21);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(74, 20);
-            this.comboBox1.TabIndex = 6;
+            "EZ"});
+            this.SVModDropList.Location = new System.Drawing.Point(224, 23);
+            this.SVModDropList.Name = "SVModDropList";
+            this.SVModDropList.Size = new System.Drawing.Size(74, 20);
+            this.SVModDropList.TabIndex = 6;
+            this.SVModDropList.SelectedIndexChanged += new System.EventHandler(this.SVModDropList_SelectedIndexChanged);
             // 
             // modLbl
             // 
             this.modLbl.AutoSize = true;
-            this.modLbl.Location = new System.Drawing.Point(190, 24);
+            this.modLbl.Location = new System.Drawing.Point(190, 26);
             this.modLbl.Name = "modLbl";
             this.modLbl.Size = new System.Drawing.Size(28, 13);
             this.modLbl.TabIndex = 7;
@@ -206,8 +182,7 @@ namespace TaikoMapSVViewer
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(875, 506);
             this.Controls.Add(this.modLbl);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.AutoUpdateModCheckbox);
+            this.Controls.Add(this.SVModDropList);
             this.Controls.Add(this.AutoUpdateMapCheckbox);
             this.Controls.Add(this.InMapSelect);
             this.Controls.Add(this.BeatmapUpdateLabel);
@@ -240,14 +215,11 @@ namespace TaikoMapSVViewer
         private System.Windows.Forms.ToolStripMenuItem toolStripRefresh;
         private System.Windows.Forms.ToolStripMenuItem updateStripButt;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.Timer BeatmapUpdateTimer;
-        private System.Windows.Forms.Timer OsuRunningTimer;
         private System.Windows.Forms.Label OsuRunningLabel;
         private System.Windows.Forms.Label BeatmapUpdateLabel;
         private System.Windows.Forms.Label InMapSelect;
         private System.Windows.Forms.CheckBox AutoUpdateMapCheckbox;
-        private System.Windows.Forms.CheckBox AutoUpdateModCheckbox;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox SVModDropList;
         private System.Windows.Forms.Label modLbl;
     }
 }

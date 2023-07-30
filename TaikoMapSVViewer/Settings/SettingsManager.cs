@@ -8,9 +8,9 @@ namespace TaikoMapSVViewer.Settings
     {
         static string _version = "";
         static bool _autoUpdateSelectedMap = false;
-        static bool _autoUpdateMod = false;
         static string _songsFolder = "";
         static Colors _colors;
+        static int _svMod;
 
         public static string Version { get => _version; set => _version = value; }
         public static bool AutoUpdateSelectedMap
@@ -20,16 +20,6 @@ namespace TaikoMapSVViewer.Settings
             {
                 _autoUpdateSelectedMap = value;
                 Properties.Settings.Default.AutoUpdateSelectedBeatmap = _autoUpdateSelectedMap;
-                Properties.Settings.Default.Save();
-            }
-        }
-        public static bool AutoUpdateMod
-        {
-            get => _autoUpdateMod;
-            set
-            {
-                _autoUpdateMod = value;
-                Properties.Settings.Default.AutoUpdateMod = _autoUpdateMod;
                 Properties.Settings.Default.Save();
             }
         }
@@ -51,11 +41,22 @@ namespace TaikoMapSVViewer.Settings
                 _colors = value;
             }
         }
+        public static int SVMod
+        {
+            get => _svMod;
+            set
+            {
+                _svMod = value;
+                Properties.Settings.Default.SVModSetting = _svMod;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         public static void Init()
         {
             _autoUpdateSelectedMap = Properties.Settings.Default.AutoUpdateSelectedBeatmap;
             _songsFolder = Properties.Settings.Default.SongsFolder;
+            _svMod = Properties.Settings.Default.SVModSetting;
 
             _colors = new Colors();
             _colors.GraphLineColor = Properties.Settings.Default.GraphLineColor;
