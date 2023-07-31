@@ -10,11 +10,6 @@ You can check out other mode's maps. I haven't really tested those but it should
     - [ ] Change marker style (color, size, show/hide)
 - [ ] Open multiple diffs
 - [ ] Tweak exact SV+time when you hover a point on the graph; it's a bit picky sometimes
-- [x] Let different SV modifying mods affect the graph
-- [x] Make barline gimmicks not show (unless they're affecting a hitobject)
-- [x] Change marker size depending on zoom level
-- [x] Add drag-and-drop to open diffs
-- [x] Add auto-update thing
 
 - - - -
 
