@@ -42,6 +42,7 @@ namespace TaikoMapSVViewer
         bool _previousCanRead = true;
 
         public ReadError OnReadError { get => _onReadError; set => _onReadError = value; }
+        public bool CanRead { get => _osuReader.CanRead; }
 
         T ReadProperty<T>(object readObj, string propName, T defaultValue = default) where T : struct
         {

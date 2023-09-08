@@ -291,7 +291,7 @@ namespace TaikoMapSVViewer
             SVChart.ChartAreas[0].AxisX.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
             SVChart.ChartAreas[0].AxisY.MajorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
             SVChart.ChartAreas[0].AxisY.MinorGrid.LineColor = Color.FromArgb(126, 126, 126, 126);
-                
+
             SVChart.ChartAreas[0].AxisX.Name = "Seconds";
             SVChart.ChartAreas[0].AxisY.Name = "BPM SV";
 
@@ -501,7 +501,7 @@ namespace TaikoMapSVViewer
 
             if (InvokeRequired)
             {
-                this.Invoke( new Action(() => ParseBeatmap(absoluteFileName)));
+                this.Invoke(new Action(() => ParseBeatmap(absoluteFileName)));
                 return;
             }
             ParseBeatmap(absoluteFileName);
@@ -516,6 +516,11 @@ namespace TaikoMapSVViewer
                 this.Invoke(new Action(() => RefreshBeatmap()));
                 return;
             }
+            RefreshBeatmap();
+        }
+        private void OnModChanged(string value)
+        {
+            currentMod = value;
             RefreshBeatmap();
         }
         private void OnAudioTimeChanged(int newValue)
@@ -563,6 +568,14 @@ namespace TaikoMapSVViewer
             if (SettingsManager.SVMod == SVModDropList.SelectedIndex)
                 return;
             SettingsManager.SVMod = SVModDropList.SelectedIndex;
+            //TODO: Handle when reader is connected and shit.
+            if (!osuReader.CanRead)
+            {
+                if (SettingsManager.SVMod != 0)
+                {
+                    OnModChanged(SVModDropList.SelectedItem.ToString());
+                }
+            }
         }
 
         private void toolStripRefresh_Click(object sender, EventArgs e)
