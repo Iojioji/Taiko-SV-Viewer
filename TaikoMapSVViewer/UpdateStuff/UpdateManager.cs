@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
+using TaikoMapSVViewer.Data;
 using TaikoMapSVViewer.Settings;
 
 namespace TaikoMapSVViewer
@@ -16,7 +17,7 @@ namespace TaikoMapSVViewer
             try
             {
 
-                XmlTextReader reader = new XmlTextReader("https://raw.githubusercontent.com/Iojioji/Taiko-SV-Viewer/main/AutoUpdater.xml");
+                XmlTextReader reader = new XmlTextReader(Constants.UpdateURL);
                 bool nextIsVersion = false;
                 string version = "";
                 while (reader.Read())

@@ -50,8 +50,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoUpdater.NET, Version=1.8.3.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autoupdater.NET.Official.1.8.3\lib\net45\AutoUpdater.NET.dll</HintPath>
+    <Reference Include="AutoUpdater.NET, Version=1.8.4.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autoupdater.NET.Official.1.8.4\lib\net45\AutoUpdater.NET.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1988.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.WebView2.1.0.1988-prerelease\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
@@ -100,6 +100,7 @@
     <Compile Include="Data\Beatmap\Objects.cs" />
     <Compile Include="Data\ChartData\ChartSection.cs" />
     <Compile Include="Data\ChartData\ObjectSV.cs" />
+    <Compile Include="Data\Constants.cs" />
     <Compile Include="Data\MemoryReader\MemoryReaderEnums.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>

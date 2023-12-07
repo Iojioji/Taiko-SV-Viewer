@@ -58,11 +58,6 @@ namespace TaikoMapSVViewer
         }
         public MainForm()
         {
-            //Rectangle thing = new Rectangle(Screen.AllScreens[1].WorkingArea.Location, new Size(Screen.AllScreens[1].WorkingArea.Width, Screen.AllScreens[1].WorkingArea.Height));
-            //Location = Screen.AllScreens[1].WorkingArea.Location;
-            //Location = thing.Location;
-            //Location = new Point((int)(Screen.AllScreens[1].WorkingArea.Location.X * 1.25), (int)(Screen.AllScreens[1].WorkingArea.Location.Y * 1.25));
-            //Location.Offset(-this.Width * 3, -this.Height * 3);
             InitializeComponent();
             Initialize();
 
@@ -72,12 +67,7 @@ namespace TaikoMapSVViewer
 
         public void Initialize()
         {
-            //Assembly assembly = Assembly.GetExecutingAssembly();
-            //FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            //string assemblyVersion = fvi.FileVersion;
             SettingsManager.Init();
-
-            //controlColor = BeatmapUpdateLabel.BackColor;
 
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -147,32 +137,6 @@ namespace TaikoMapSVViewer
                 //DrawChart(Color.DarkGreen, Color.FromArgb(255, 106, 0), currentMod);
                 DrawChart(SettingsManager.Colors.GraphLineColor, SettingsManager.Colors.GraphLineColorKiai, currentMod);
 
-
-                //If EZ is checked
-                //if (true)
-                //{
-                //    baseCTP.SliderMultiplier = baseSliderMultiplier * 0.8;
-                //    foreach (ChartSection section in chartSections)
-                //    {
-                //        section.UpdateSV(baseCTP);
-                //    }
-                //    DrawChart(Color.Blue, Color.LightBlue, "EZ");
-
-                //    minVal = Math.Min(minVal, Math.Round(baseCTP.GetLowestBPMSV()));
-                //}
-                ////If HR is checked
-                //if (true)
-                //{
-                //    baseCTP.SliderMultiplier = baseSliderMultiplier * (1.4 * 4 / 3);
-                //    foreach (ChartSection section in chartSections)
-                //    {
-                //        section.UpdateSV(baseCTP);
-                //    }
-                //    DrawChart(Color.Red, Color.OrangeRed, "HR");
-
-                //    maxVal = Math.Max(maxVal, Math.Round(baseCTP.GetHighestBPMSV()));
-                //}
-
                 SetupChart(minVal, maxVal, lastObject);
 
                 SetWindowTitle(currentBeatmap.MetadataSection);
@@ -219,20 +183,6 @@ namespace TaikoMapSVViewer
                 }
                 chartSections[chartSections.Count - 1].AddObject(baseCTP.GetNoteAdjustedBPM(ho.StartTime), ho.StartTime);
 
-                ///if (ho.GetType() == typeof(TaikoHit))
-                ///{
-                ///    TaikoHit aux = ho as TaikoHit;
-                ///    string type = aux.Color == TaikoColor.Red ? "Red    " : "Blue   ";
-                ///    Console.WriteLine($" {i + 1}:{type} - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
-                ///}
-                ///else if (ho.GetType() == typeof(TaikoDrumroll))
-                ///{
-                ///    Console.WriteLine($" {i + 1}:Slider  - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
-                ///}
-                ///else
-                ///{
-                ///    Console.WriteLine($" {i + 1}:Spinner - SV: {ctp.GetNoteAdjustedBPM(ho)} BPM");
-                ///}
                 previousNoteWasKiai = isKiai;
             }
         }
